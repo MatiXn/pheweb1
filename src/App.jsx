@@ -291,6 +291,8 @@ export default function App() {
   const [legalPage, setLegalPage] = useState(null);
   const [form, setForm] = useState({ name:"",unternehmen:"",email:"",telefon:"",positionen:"",kontaktweg:"",nachricht:"" });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
@@ -663,7 +665,7 @@ export default function App() {
           <FadeUp delay={0.2} style={{ maxWidth:680, margin:"36px auto 0" }}>
             <div style={{ background:"#fff", border:`1.5px solid ${C.borderMd}`, borderRadius:24, padding: isMobile ? "24px 18px" : "44px 40px", boxShadow:C.shadowLg }}>
               <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"center", marginBottom:24 }}>
-                {["matin@phe-perm.de","Auch per WhatsApp erreichbar","Antwort innerhalb 24h"].map(t => (
+                {["Per E-Mail anfragen","Auch per WhatsApp erreichbar","Antwort innerhalb 24h"].map(t => (
                   <span key={t} style={{ display:"inline-flex", alignItems:"center", padding:"7px 14px", borderRadius:999, background:C.bgSoft, border:`1px solid ${C.border}`, fontSize:13, color:C.muted, fontWeight:500 }}>{t}</span>
                 ))}
               </div>
@@ -674,7 +676,37 @@ export default function App() {
                   <p style={{ color:C.muted, fontSize:16 }}>Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
                 </div>
               ) : (
-                <form onSubmit={e => { e.preventDefault(); setSent(true); }}>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setSending(true);
+                  setError("");
+                  try {
+                    const res = await fetch("https://api.web3forms.com/submit", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                      body: JSON.stringify({
+                        access_key: "9b89391f-fce9-4554-9fed-18d85fbad2df",
+                        subject: `Neue Anfrage von ${form.name} – pheweb.de`,
+                        name: form.name,
+                        unternehmen: form.unternehmen,
+                        email: form.email,
+                        telefon: form.telefon,
+                        positionen: form.positionen,
+                        kontaktweg: form.kontaktweg,
+                        nachricht: form.nachricht,
+                      }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                      setSent(true);
+                    } else {
+                      setError("Fehler beim Senden. Bitte versuchen Sie es erneut.");
+                    }
+                  } catch {
+                    setError("Fehler beim Senden. Bitte versuchen Sie es erneut.");
+                  }
+                  setSending(false);
+                }}>
                   <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
                     <input style={INP} placeholder="Vor- und Nachname" required value={form.name} onChange={setF("name")} />
                     <input style={INP} placeholder="Unternehmen" required value={form.unternehmen} onChange={setF("unternehmen")} />
@@ -692,8 +724,12 @@ export default function App() {
                   </div>
                   <textarea style={{ ...INP, minHeight:110, resize:"vertical", display:"block", marginBottom:10, lineHeight:1.6 }} placeholder="Was sind Ihre größten Herausforderungen im Recruiting?" required value={form.nachricht} onChange={setF("nachricht")} />
                   <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:12 }}>
-                    <button type="submit" className="lift" style={{ ...B.primary, width:"100%", borderRadius:12, padding:"14px 20px" }}>Analyse anfragen</button>
+                    <button type="submit" disabled={sending} className="lift" style={{ ...B.primary, width:"100%", borderRadius:12, padding:"14px 20px", opacity: sending ? 0.75 : 1, cursor: sending ? "not-allowed" : "pointer" }}>
+                      {sending ? "Wird gesendet..." : "Analyse anfragen"}
+                    </button>
                     <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="lift" style={{ ...B.wa, width:"100%", borderRadius:12, padding:"14px 20px" }}>Per WhatsApp schreiben</a>
+                  </div>
+                  {error && <p style={{ marginTop:12, fontSize:13, color:"#b91c1c", textAlign:"center" }}>{error}</p>}
                   </div>
                   <p style={{ marginTop:14, fontSize:12.5, color:C.faint, lineHeight:1.65, textAlign:"center" }}>
                     Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Angaben zu.{" "}
