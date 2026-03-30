@@ -756,7 +756,6 @@ export default function App() {
             Hüttenstraße 30, 40215 Düsseldorf
           </p>
           <div style={{ display:"flex", flexWrap:"wrap", gap:"8px 24px", justifyContent:"center", marginBottom:24 }}>
-            <a href="mailto:matin@phe-perm.de" style={{ fontSize:14, color:C.muted }}>matin@phe-perm.de</a>
             {[["Impressum","impressum"],["Datenschutz","datenschutz"],["AGB","agb"]].map(([l,id]) => (
               <button key={id} onClick={() => setLegalPage(id)} style={{ fontSize:14, color:C.muted, background:"none", border:"none", cursor:"pointer", textDecoration:"underline", textUnderlineOffset:2, fontFamily:FD }}>{l}</button>
             ))}
