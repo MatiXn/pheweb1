@@ -418,21 +418,10 @@ function StatCard({ num, label, delay }) {
 function MobileMenu({ open, onClose, scrollTo }) {
   if (!open) return null;
   return (
-    <div
-      style={{ position: "fixed", inset: 0, zIndex: 99999, background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 32 }}
-    >
-      <button
-        onTouchEnd={(e) => { e.preventDefault(); onClose(); }}
-        onClick={onClose}
-        style={{ position: "absolute", top: 16, right: 16, background: C.accentBg, border: `1.5px solid ${C.accentBd}`, borderRadius: 12, padding: "12px 20px", cursor: "pointer", fontFamily: F, fontSize: 16, fontWeight: 700, color: C.accent, lineHeight: 1, WebkitTapHighlightColor: "transparent" }}
-      >✕ Schließen</button>
+    <div style={{ position: "fixed", inset: 0, zIndex: 998, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(16px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28 }}>
+      <button onClick={onClose} style={{ position: "absolute", top: 20, right: 20, background: "none", border: `1.5px solid ${C.borderMd}`, borderRadius: 10, padding: "8px 16px", cursor: "pointer", fontFamily: F, fontSize: 22, color: C.text, lineHeight: 1 }}>✕</button>
       {NAV_ITEMS.map(([l, id]) => (
-        <button
-          key={id}
-          onTouchEnd={(e) => { e.preventDefault(); scrollTo(id); onClose(); }}
-          onClick={() => { scrollTo(id); onClose(); }}
-          style={{ fontFamily: F, fontSize: 24, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em", padding: "8px 24px", WebkitTapHighlightColor: "transparent" }}
-        >{l}</button>
+        <button key={id} onClick={() => { scrollTo(id); onClose(); }} style={{ fontFamily: F, fontSize: 26, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em" }}>{l}</button>
       ))}
       <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15, marginTop: 8 }}>Per WhatsApp anfragen</a>
     </div>
@@ -510,7 +499,7 @@ export default function App() {
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} scrollTo={scrollTo} />
 
       {/* NAV */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000, background: scrolled ? "rgba(255,255,255,0.94)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? `1px solid ${C.border}` : "none", boxShadow: scrolled ? "0 1px 16px rgba(59,114,184,0.06)" : "none", transition: "all 0.3s ease" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 999, background: scrolled ? "rgba(255,255,255,0.94)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? `1px solid ${C.border}` : "none", boxShadow: scrolled ? "0 1px 16px rgba(59,114,184,0.06)" : "none", transition: "all 0.3s ease" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: isMobile ? "15px 18px" : "16px 32px", maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ fontFamily: FH, fontSize: isMobile ? 20 : 24, letterSpacing: "-0.02em", color: C.text, cursor: "pointer" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             phe<em style={{ fontStyle: "italic", color: C.accent }}>web</em>
