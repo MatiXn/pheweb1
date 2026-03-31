@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 const C = {
@@ -21,8 +22,8 @@ const C = {
   shadowLg: "0 20px 60px rgba(59,114,184,0.12)",
 };
 
-const F = "'Bricolage Grotesque', sans-serif";
-const FH = "'DM Serif Display', serif";
+const F = "'Helvetica Neue', Helvetica, Arial, sans-serif";
+const FH = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
 const WA_URL =
   "https://wa.me/491739980100?text=Hallo%20Matin%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Recruiting-L%C3%B6sung%20und%20m%C3%B6chte%20mehr%20erfahren.";
@@ -139,18 +140,12 @@ const GEAR_ITEMS = [
 ];
 
 const EXAMPLE_FUNNELS = [
-  {
-    title: "Elektroniker (m/w/d)",
-    desc: "Recruiting-Funnel für gewerblich-technische Fachkräfte mit klaren Vorteilen, mobiler Schnellbewerbung und optionaler WhatsApp-Strecke.",
-  },
-  {
-    title: "Mechatroniker (m/w/d)",
-    desc: "Für Unternehmen mit akutem Personalbedarf und dem Ziel, in kurzer Zeit mehr qualifizierte Kontakte zu erzeugen.",
-  },
-  {
-    title: "Servicetechniker (m/w/d)",
-    desc: "Mit regional ausgesteuerter Kampagne, einfacher Vorqualifizierung und schnellem Follow-up bis zum Vorstellungsgespräch.",
-  },
+  { title: "Elektroniker (m/w/d)", desc: "Funnel für gewerblich-technische Fachkräfte mit klaren Vorteilen, mobiler Schnellbewerbung und WhatsApp-Strecke.", link: "/funnel/elektroniker" },
+  { title: "Mechatroniker (m/w/d)", desc: "Für Unternehmen mit akutem Personalbedarf und dem Ziel, in kurzer Zeit mehr qualifizierte Kontakte zu erzeugen.", link: "/funnel/mechatroniker" },
+  { title: "SPS-Programmierer (m/w/d)", desc: "Gezielte Ansprache spezialisierter Profile mit stärkerer Vorqualifizierung und klarer Positionierung.", link: "/funnel/sps-programmierer" },
+  { title: "Elektriker (m/w/d)", desc: "Für Unternehmen, die regionale Fachkräfte schneller und planbarer in Gespräche bringen möchten.", link: "/funnel/elektriker" },
+  { title: "Anlagenmechaniker SHK (m/w/d)", desc: "Für SHK-, TGA- und Serviceunternehmen mit akutem Bedarf an passenden Fachkräften.", link: "/funnel/anlagenmechaniker-shk" },
+  { title: "Kältetechniker (m/w/d)", desc: "Für enge Fachmärkte, in denen klare Ansprache und schnelle Reaktion den Unterschied machen.", link: "/funnel/kaeltetechniker" },
 ];
 
 const COMPARISON = [
@@ -418,10 +413,21 @@ function StatCard({ num, label, delay }) {
 function MobileMenu({ open, onClose, scrollTo }) {
   if (!open) return null;
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 998, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(16px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28 }}>
-      <button onClick={onClose} style={{ position: "absolute", top: 20, right: 20, background: "none", border: `1.5px solid ${C.borderMd}`, borderRadius: 10, padding: "8px 16px", cursor: "pointer", fontFamily: F, fontSize: 22, color: C.text, lineHeight: 1 }}>✕</button>
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 99999, background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 32 }}
+    >
+      <button
+        onTouchEnd={(e) => { e.preventDefault(); onClose(); }}
+        onClick={onClose}
+        style={{ position: "absolute", top: 16, right: 16, background: C.accentBg, border: `1.5px solid ${C.accentBd}`, borderRadius: 12, padding: "12px 20px", cursor: "pointer", fontFamily: F, fontSize: 16, fontWeight: 700, color: C.accent, lineHeight: 1, WebkitTapHighlightColor: "transparent" }}
+      >✕ Schließen</button>
       {NAV_ITEMS.map(([l, id]) => (
-        <button key={id} onClick={() => { scrollTo(id); onClose(); }} style={{ fontFamily: F, fontSize: 26, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em" }}>{l}</button>
+        <button
+          key={id}
+          onTouchEnd={(e) => { e.preventDefault(); scrollTo(id); onClose(); }}
+          onClick={() => { scrollTo(id); onClose(); }}
+          style={{ fontFamily: F, fontSize: 24, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em", padding: "8px 24px", WebkitTapHighlightColor: "transparent" }}
+        >{l}</button>
       ))}
       <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15, marginTop: 8 }}>Per WhatsApp anfragen</a>
     </div>
@@ -454,17 +460,31 @@ export default function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.website) return;
     setSending(true);
     setError("");
     try {
-      const payload = { name: form.name.trim(), unternehmen: form.unternehmen.trim(), email: form.email.trim(), telefon: form.telefon.trim(), positionen: form.positionen.trim(), kontaktweg: form.kontaktweg.trim(), nachricht: form.nachricht.trim(), website: form.website.trim() };
-      const res = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, credentials: "same-origin", body: JSON.stringify(payload) });
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: "9b89391f-fce9-4554-9fed-18d85fbad2df",
+          subject: `Neue Anfrage von ${form.name.trim()} – pheweb.de`,
+          name: form.name.trim(),
+          unternehmen: form.unternehmen.trim(),
+          email: form.email.trim(),
+          telefon: form.telefon.trim(),
+          positionen: form.positionen.trim(),
+          kontaktweg: form.kontaktweg,
+          nachricht: form.nachricht.trim(),
+        }),
+      });
       const data = await res.json();
-      if (res.ok && data.success) {
+      if (data.success) {
         setSent(true);
         setForm({ name: "", unternehmen: "", email: "", telefon: "", positionen: "", kontaktweg: "", nachricht: "", website: "" });
       } else {
-        setError(data?.message || "Fehler beim Senden. Bitte versuchen Sie es erneut.");
+        setError("Fehler beim Senden. Bitte versuchen Sie es erneut.");
       }
     } catch {
       setError("Fehler beim Senden. Bitte versuchen Sie es erneut.");
@@ -476,10 +496,9 @@ export default function App() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Serif+Display:ital@0;1&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-        body{font-family:'Bricolage Grotesque',sans-serif;background:#fff;overflow-x:hidden;color:#0f1623}
+        body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#fff;overflow-x:hidden;color:#0f1623}
         a{color:inherit;text-decoration:none}
         @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes heroIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -499,7 +518,7 @@ export default function App() {
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} scrollTo={scrollTo} />
 
       {/* NAV */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 999, background: scrolled ? "rgba(255,255,255,0.94)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? `1px solid ${C.border}` : "none", boxShadow: scrolled ? "0 1px 16px rgba(59,114,184,0.06)" : "none", transition: "all 0.3s ease" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000, background: scrolled ? "rgba(255,255,255,0.94)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? `1px solid ${C.border}` : "none", boxShadow: scrolled ? "0 1px 16px rgba(59,114,184,0.06)" : "none", transition: "all 0.3s ease" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: isMobile ? "15px 18px" : "16px 32px", maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ fontFamily: FH, fontSize: isMobile ? 20 : 24, letterSpacing: "-0.02em", color: C.text, cursor: "pointer" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             phe<em style={{ fontStyle: "italic", color: C.accent }}>web</em>
@@ -685,12 +704,12 @@ export default function App() {
           <FadeUp delay={0.2}><p style={{ ...T.lead, maxWidth: 760 }}>Nicht theoretisch. Nicht kompliziert. Sondern klar, direkt und auf eine konkrete Stelle ausgerichtet.</p></FadeUp>
           <div style={{ display: "grid", gridTemplateColumns: cols("1fr 1fr 1fr", "1fr 1fr", "1fr"), gap: 16, marginTop: 48 }}>
             {EXAMPLE_FUNNELS.map((item, i) => (
-              <FadeUp key={item.title} delay={i * 0.08}>
+              <FadeUp key={item.title} delay={i * 0.06}>
                 <div style={{ background: "#fff", border: `1.5px solid ${C.border}`, borderRadius: 18, padding: 24, boxShadow: C.shadow, textAlign: "left", height: "100%", display: "flex", flexDirection: "column" }}>
                   <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 10, background: C.accentBg, border: `1px solid ${C.accentBd}`, fontFamily: F, fontSize: 14, fontWeight: 800, color: C.accent, marginBottom: 16 }}>0{i + 1}</div>
                   <h3 style={{ ...T.h3, marginBottom: 10 }}>{item.title}</h3>
                   <p style={{ fontFamily: F, fontSize: 14, color: C.muted, lineHeight: 1.75, marginBottom: 18, flex: 1 }}>{item.desc}</p>
-                  <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.outline, width: "100%", borderRadius: 12, padding: "13px 18px", fontSize: 14 }}>Funnel anfragen</button>
+                  <Link to={item.link} className="lift" style={{ ...Btn.outline, width: "100%", borderRadius: 12, padding: "13px 18px", fontSize: 14, textAlign: "center" }}>Funnel ansehen</Link>
                 </div>
               </FadeUp>
             ))}
