@@ -730,7 +730,6 @@ export default function App() {
                     <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="lift" style={{ ...B.wa, width:"100%", borderRadius:12, padding:"14px 20px" }}>Per WhatsApp schreiben</a>
                   </div>
                   {error && <p style={{ marginTop:12, fontSize:13, color:"#b91c1c", textAlign:"center" }}>{error}</p>}
-
                   <p style={{ marginTop:14, fontSize:12.5, color:C.faint, lineHeight:1.65, textAlign:"center" }}>
                     Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Angaben zu.{" "}
                     {[["Datenschutz","datenschutz"],["Impressum","impressum"],["AGB","agb"]].map(([l,id],i) => (
