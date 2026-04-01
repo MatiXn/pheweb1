@@ -512,7 +512,7 @@ export default function App() {
             </div>
           )}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            {!isMobile && <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.primary, padding: "9px 20px", fontSize: 13.5 }}>Analyse anfragen</button>}
+            {!isMobile && <Link to="/login" className="lift" style={{ ...Btn.outline, padding: "9px 20px", fontSize: 13.5 }}>Kundenbereich</Link>}{!isMobile && <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.primary, padding: "9px 20px", fontSize: 13.5 }}>Analyse anfragen</button>}
             {isTablet && <button onClick={() => setMenuOpen(true)} style={{ background: "none", border: `1.5px solid ${C.borderMd}`, borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontFamily: F, fontSize: 20, color: C.text }}>☰</button>}
           </div>
         </div>
