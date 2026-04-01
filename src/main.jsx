@@ -6,6 +6,7 @@ import VacancyFunnelPage from "./pages/VacancyFunnelPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
