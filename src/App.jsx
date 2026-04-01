@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 const C = {
@@ -21,8 +22,8 @@ const C = {
   shadowLg: "0 20px 60px rgba(59,114,184,0.12)",
 };
 
-const F = "'Bricolage Grotesque', sans-serif";
-const FH = "'DM Serif Display', serif";
+const F = "'Helvetica Neue', Helvetica, Arial, sans-serif";
+const FH = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
 const WA_URL =
   "https://wa.me/491739980100?text=Hallo%20Matin%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Recruiting-L%C3%B6sung%20und%20m%C3%B6chte%20mehr%20erfahren.";
@@ -476,7 +477,7 @@ export default function App() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Serif+Display:ital@0;1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?);
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
         body{font-family:'Bricolage Grotesque',sans-serif;background:#fff;overflow-x:hidden;color:#0f1623}
