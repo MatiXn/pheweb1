@@ -839,6 +839,24 @@ export default function App() {
         </div>
       </section>
 
+
+      {/* KUNDENBEREICH */}
+      <section style={{ background: C.bgSoft, borderTop: `1px solid ${C.border}`, padding: isMobile ? "48px 0" : "72px 0" }}>
+        <div style={{ ...wrap }}>
+          <div style={{ display: "grid", gridTemplateColumns: cols("1fr 1fr", "1fr", "1fr"), gap: 48, alignItems: "center" }}>
+            <FadeUp>
+              <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:C.accentBg, border:`1px solid ${C.accentBd}`, color:C.accent, borderRadius:999, padding:"5px 14px", fontFamily:F, fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:16 }}>Kundenbereich</span>
+              <h2 style={{ ...T.h2, fontSize:"clamp(22px,3vw,34px)", marginBottom:12 }}>Bereits Kunde bei pheweb?</h2>
+              <p style={{ fontFamily:F, fontSize:15, color:C.muted, lineHeight:1.7, marginBottom:28 }}>Melden Sie sich an und sehen Sie den Status Ihrer Kampagnen, verwalten Sie Ihre Funnels und erstellen Sie neue.</p>
+              <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
+                <Link to="/login" className="lift" style={{ ...Btn.primary, padding:"13px 28px", fontSize:15 }}>Anmelden</Link>
+                <Link to="/register" className="lift" style={{ ...Btn.outline, padding:"13px 28px", fontSize:15 }}>Konto erstellen</Link>
+              </div>
+            </FadeUp>
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer style={{ background: C.bgSoft, borderTop: `1px solid ${C.border}`, padding: "44px 0 28px" }}>
         <div style={{ ...wrap, textAlign: "center" }}>
