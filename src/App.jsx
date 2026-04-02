@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 const C = {
