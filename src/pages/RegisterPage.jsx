@@ -14,7 +14,7 @@ function PwField({ placeholder, value, onChange }) {
     <div style={{ position:"relative", marginBottom:12 }}>
       <input style={{...INP, marginBottom:0, paddingRight:48}} type={show?"text":"password"} placeholder={placeholder} required value={value} onChange={onChange} />
       <button type="button" onClick={()=>setShow(!show)} style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", fontSize:18, color:C.faint, padding:0 }}>
-        {show ? "🙈" : "👁"}
+        {show ? "Verbergen" : "Anzeigen"}
       </button>
     </div>
   );
