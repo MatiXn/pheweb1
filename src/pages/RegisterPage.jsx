@@ -8,13 +8,28 @@ const C = { accent:"#3b72b8", accentBg:"#eef4ff", accentBd:"rgba(59,114,184,0.18
 const F = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 const INP = { width:"100%", background:"#f5f7fa", border:`1.5px solid ${C.border}`, borderRadius:12, padding:"13px 16px", fontSize:15, color:C.text, outline:"none", fontFamily:F, marginBottom:12, boxSizing:"border-box" };
 
+function EyeIcon({ open }) {
+  return open ? (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  ) : (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  );
+}
+
 function PwField({ placeholder, value, onChange }) {
   const [show, setShow] = useState(false);
   return (
     <div style={{ position:"relative", marginBottom:12 }}>
       <input style={{...INP, marginBottom:0, paddingRight:48}} type={show?"text":"password"} placeholder={placeholder} required value={value} onChange={onChange} />
-      <button type="button" onClick={()=>setShow(!show)} style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", fontSize:18, color:C.faint, padding:0 }}>
-        {show ? "Verbergen" : "Anzeigen"}
+      <button type="button" onClick={()=>setShow(!show)} style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:C.faint, padding:0, display:"flex", alignItems:"center" }}>
+        <EyeIcon open={show} />
       </button>
     </div>
   );
