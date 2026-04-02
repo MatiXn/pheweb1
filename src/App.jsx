@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 const C = {
@@ -424,8 +423,7 @@ function MobileMenu({ open, onClose, scrollTo }) {
       {NAV_ITEMS.map(([l, id]) => (
         <button key={id} onClick={() => { scrollTo(id); onClose(); }} style={{ fontFamily: F, fontSize: 26, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em" }}>{l}</button>
       ))}
-      <Link to="/login" onClick={onClose} style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", background:"#fff", color:"#0f1623", border:"1.5px solid rgba(15,22,35,0.13)", borderRadius:12, padding:"13px 28px", fontSize:16, fontWeight:700, fontFamily:"'Helvetica Neue', Helvetica, Arial, sans-serif", textDecoration:"none", WebkitTapHighlightColor:"transparent" }}>Kundenbereich</Link>
-      <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15 }}>Per WhatsApp anfragen</a>
+      <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15, marginTop: 8 }}>Per WhatsApp anfragen</a>
     </div>
   );
 }
@@ -514,7 +512,7 @@ export default function App() {
             </div>
           )}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            {!isMobile && <Link to="/login" className="lift" style={{ ...Btn.outline, padding: "9px 20px", fontSize: 13.5 }}>Kundenbereich</Link>}{!isMobile && <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.primary, padding: "9px 20px", fontSize: 13.5 }}>Analyse anfragen</button>}
+            {!isMobile && <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.primary, padding: "9px 20px", fontSize: 13.5 }}>Analyse anfragen</button>}
             {isTablet && <button onClick={() => setMenuOpen(true)} style={{ background: "none", border: `1.5px solid ${C.borderMd}`, borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontFamily: F, fontSize: 20, color: C.text }}>☰</button>}
           </div>
         </div>
@@ -838,24 +836,6 @@ export default function App() {
               )}
             </div>
           </FadeUp>
-        </div>
-      </section>
-
-
-      {/* KUNDENBEREICH */}
-      <section style={{ background: C.bgSoft, borderTop: `1px solid ${C.border}`, padding: isMobile ? "48px 0" : "72px 0" }}>
-        <div style={{ ...wrap }}>
-          <div style={{ display: "grid", gridTemplateColumns: cols("1fr 1fr", "1fr", "1fr"), gap: 48, alignItems: "center" }}>
-            <FadeUp>
-              <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:C.accentBg, border:`1px solid ${C.accentBd}`, color:C.accent, borderRadius:999, padding:"5px 14px", fontFamily:F, fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:16 }}>Kundenbereich</span>
-              <h2 style={{ ...T.h2, fontSize:"clamp(22px,3vw,34px)", marginBottom:12 }}>Bereits Kunde bei pheweb?</h2>
-              <p style={{ fontFamily:F, fontSize:15, color:C.muted, lineHeight:1.7, marginBottom:28 }}>Melden Sie sich an und sehen Sie den Status Ihrer Kampagnen, verwalten Sie Ihre Funnels und erstellen Sie neue.</p>
-              <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
-                <Link to="/login" className="lift" style={{ ...Btn.primary, padding:"13px 28px", fontSize:15 }}>Anmelden</Link>
-                <Link to="/register" className="lift" style={{ ...Btn.outline, padding:"13px 28px", fontSize:15 }}>Konto erstellen</Link>
-              </div>
-            </FadeUp>
-          </div>
         </div>
       </section>
 
