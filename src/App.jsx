@@ -424,7 +424,8 @@ function MobileMenu({ open, onClose, scrollTo }) {
       {NAV_ITEMS.map(([l, id]) => (
         <button key={id} onClick={() => { scrollTo(id); onClose(); }} style={{ fontFamily: F, fontSize: 26, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em" }}>{l}</button>
       ))}
-      <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15, marginTop: 8 }}>Per WhatsApp anfragen</a>
+      <Link to="/login" onClick={onClose} style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", background:"#fff", color:"#0f1623", border:"1.5px solid rgba(15,22,35,0.13)", borderRadius:12, padding:"13px 28px", fontSize:16, fontWeight:700, fontFamily:"'Helvetica Neue', Helvetica, Arial, sans-serif", textDecoration:"none", WebkitTapHighlightColor:"transparent" }}>Kundenbereich</Link>
+      <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15 }}>Per WhatsApp anfragen</a>
     </div>
   );
 }
