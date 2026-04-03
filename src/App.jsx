@@ -440,7 +440,7 @@ function MobileMenu({ open, onClose, scrollTo }) {
       {NAV_ITEMS.map(([l, id]) => (
         <button key={id} onClick={() => { scrollTo(id); onClose(); }} style={{ fontFamily: F, fontSize: 26, fontWeight: 700, color: C.text, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.01em" }}>{l}</button>
       ))}
-      <Link to="/login" onClick={onClose} style={{ ...Btn.outline, padding: "13px 28px", fontSize: 15, borderRadius: 12 }}>Kundenbereich</Link>
+      <Link to="/login" onClick={onClose} style={{ ...Btn.outline, padding: "13px 28px", fontSize: 15, borderRadius: 12 }}>Login</Link>
       <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{ ...Btn.wa, padding: "14px 32px", fontSize: 15, marginTop: 8 }}>Per WhatsApp anfragen</a>
     </div>
   );
@@ -532,7 +532,7 @@ export default function App() {
             </div>
           )}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            {!isMobile && <Link to="/login" className="lift" style={{ ...Btn.outline, padding: "9px 18px", fontSize: 13.5 }}>Kundenbereich</Link>}
+            {!isMobile && <Link to="/login" className="lift" style={{ ...Btn.outline, padding: "9px 18px", fontSize: 13.5 }}>Login</Link>}
             {!isMobile && <button onClick={() => scrollTo("kontakt")} className="lift" style={{ ...Btn.primary, padding: "9px 20px", fontSize: 13.5 }}>Analyse anfragen</button>}
             {isTablet && <button onClick={() => setMenuOpen(true)} style={{ background: "none", border: `1.5px solid ${C.borderMd}`, borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontFamily: F, fontSize: 20, color: C.text }}>☰</button>}
           </div>
