@@ -630,6 +630,69 @@ export default function App() {
         </div>
       </div>
 
+
+      {/* 6 FUNNEL-PHASEN */}
+      <section id="system" style={{ background: C.bgSoft, padding: isMobile ? "64px 0" : "96px 0" }}>
+        <div style={{ ...wrap, textAlign: "center" }}>
+          <FadeUp><span style={T.eye}>Das System</span></FadeUp>
+          <FadeUp delay={0.1}><h2 style={{ ...T.h2, marginBottom: 14 }}>Von der ersten Reichweite <span style={{ color: C.accent }}>bis zur Einstellung.</span></h2></FadeUp>
+          <FadeUp delay={0.2}><p style={{ ...T.lead, maxWidth: 720 }}>Ein vollständiger Recruiting-Funnel hat 6 Phasen. Jede Phase muss funktionieren – sonst verlieren Sie Kandidaten genau dort wo Sie sie eigentlich gewinnen sollten.</p></FadeUp>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 40, marginBottom: 32 }}>
+            {FUNNEL_PHASEN.map((p, i) => (
+              <button key={p.n} onClick={() => setActivePhase(i)} style={{ fontFamily: F, fontSize: 13, fontWeight: 700, padding: "8px 16px", borderRadius: 999, border: `1.5px solid ${activePhase === i ? C.accent : C.border}`, background: activePhase === i ? C.accent : "#fff", color: activePhase === i ? "#fff" : C.muted, cursor: "pointer", transition: "all 0.2s", touchAction: "manipulation" }}>
+                {p.n} {p.title}
+              </button>
+            ))}
+          </div>
+          <FadeUp>
+            <div style={{ background: "#fff", borderRadius: 22, padding: isMobile ? "28px 22px" : "40px 48px", border: `2px solid ${C.accent}`, boxShadow: C.shadowLg, maxWidth: 760, margin: "0 auto", textAlign: "left", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(90deg, ${C.accent} ${((activePhase + 1) / 6) * 100}%, ${C.accentBg} 0%)`, transition: "all 0.4s ease" }} />
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 20, flexWrap: isMobile ? "wrap" : "nowrap" }}>
+                <div style={{ width: 56, height: 56, borderRadius: 16, background: C.accentBg, border: `2px solid ${C.accentBd}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>{FUNNEL_PHASEN[activePhase].icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: F, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: C.accent }}>Phase {FUNNEL_PHASEN[activePhase].n}</span>
+                    <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.muted }}>{FUNNEL_PHASEN[activePhase].sub}</span>
+                  </div>
+                  <h3 style={{ fontFamily: F, fontSize: "clamp(20px,3vw,28px)", fontWeight: 800, color: C.text, marginBottom: 14 }}>{FUNNEL_PHASEN[activePhase].title}</h3>
+                  <p style={{ fontFamily: F, fontSize: 16, color: C.muted, lineHeight: 1.8 }}>{FUNNEL_PHASEN[activePhase].desc}</p>
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, paddingTop: 20, borderTop: `1px solid ${C.border}` }}>
+                <button onClick={() => setActivePhase(p => Math.max(0, p - 1))} disabled={activePhase === 0} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: activePhase === 0 ? C.faint : C.accent, background: "none", border: "none", cursor: activePhase === 0 ? "default" : "pointer", opacity: activePhase === 0 ? 0.4 : 1 }}>← Vorherige Phase</button>
+                <span style={{ fontFamily: F, fontSize: 13, color: C.faint }}>{activePhase + 1} / {FUNNEL_PHASEN.length}</span>
+                <button onClick={() => setActivePhase(p => Math.min(5, p + 1))} disabled={activePhase === 5} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: activePhase === 5 ? C.faint : C.accent, background: "none", border: "none", cursor: activePhase === 5 ? "default" : "pointer", opacity: activePhase === 5 ? 0.4 : 1 }}>Nächste Phase →</button>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* BRANCHEN */}
+      <section style={{ background: "#fff", padding: isMobile ? "64px 0" : "96px 0" }}>
+        <div style={{ ...wrap, textAlign: "center" }}>
+          <FadeUp><span style={T.eye}>Branchen</span></FadeUp>
+          <FadeUp delay={0.1}><h2 style={{ ...T.h2, marginBottom: 14 }}>Für welche Branchen <span style={{ color: C.accent }}>wir Funnels bauen.</span></h2></FadeUp>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 36, marginBottom: 28 }}>
+            {BRANCHEN_KATEGORIEN.map((k, i) => (
+              <button key={k.label} onClick={() => setActiveBranche(i)} style={{ fontFamily: F, fontSize: 13, fontWeight: 700, padding: "9px 18px", borderRadius: 999, border: `1.5px solid ${activeBranche === i ? k.color : C.border}`, background: activeBranche === i ? k.color : "#fff", color: activeBranche === i ? "#fff" : C.muted, cursor: "pointer", transition: "all 0.2s", touchAction: "manipulation" }}>{k.label}</button>
+            ))}
+          </div>
+          <FadeUp>
+            <div style={{ background: BRANCHEN_KATEGORIEN[activeBranche].bg, borderRadius: 18, padding: isMobile ? "24px 20px" : "32px 36px", border: `1.5px solid ${BRANCHEN_KATEGORIEN[activeBranche].color}33`, maxWidth: 760, margin: "0 auto" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+                {BRANCHEN_KATEGORIEN[activeBranche].items.map(item => (
+                  <span key={item} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 999, background: "#fff", border: `1px solid ${C.border}`, fontFamily: F, fontSize: 14, fontWeight: 600, color: C.text, boxShadow: C.shadow }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: BRANCHEN_KATEGORIEN[activeBranche].color, display: "inline-block" }} />{item}
+                  </span>
+                ))}
+              </div>
+              <p style={{ fontFamily: F, fontSize: 13, color: C.faint, marginTop: 20, textAlign: "center" }}>Ihre Branche nicht dabei? <button onClick={() => scrollTo("kontakt")} style={{ color: C.accent, fontWeight: 600, background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13 }}>Sprechen Sie uns an.</button></p>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
       {/* ANGEBOT */}
       <section id="angebot" style={{ background: "#fff", padding: isMobile ? "64px 0" : "96px 0" }}>
         <div style={{ ...wrap, textAlign: "center" }}>
