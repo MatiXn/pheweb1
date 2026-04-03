@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 const C = {
@@ -151,6 +152,22 @@ const EXAMPLE_FUNNELS = [
     title: "Servicetechniker (m/w/d)",
     desc: "Mit regional ausgesteuerter Kampagne, einfacher Vorqualifizierung und schnellem Follow-up bis zum Vorstellungsgespräch.",
   },
+];
+
+const BRANCHEN_KATEGORIEN=[
+  {label:"Industrie & Technik",color:"#3b72b8",bg:"#eef4ff",items:["Elektrotechnik","Mechatronik","Anlagenbau","Maschinenbau","SPS-Programmierung","Instandhaltung","Servicetechnik","Kältetechnik","Industriekletterer"]},
+  {label:"Handwerk & Bau",color:"#d97706",bg:"#fffbeb",items:["Elektroinstallation","Sanitär & Heizung","Dachdeckerei","Malerei","Zimmerei","Tischlerei","Friseurhandwerk","Bäckerei"]},
+  {label:"Pflege & Soziales",color:"#7c3aed",bg:"#f5f3ff",items:["Pflegekraft","Altenpflege","Krankenpflege","Erzieher","Sozialarbeit","Physiotherapie"]},
+  {label:"Logistik & Service",color:"#16a34a",bg:"#f0fdf4",items:["LKW-Fahrer","Lagerlogistik","Gastronomie","Hotellerie","Reinigung","Sicherheitsdienst","Facility Management","Einzelhandel"]},
+];
+
+const FUNNEL_PHASEN=[
+  {n:"01",title:"Awareness",sub:"Reichweite erzeugen",desc:"Potenzielle Kandidaten werden gezielt auf Ihre offene Stelle aufmerksam gemacht – auf den Kanälen wo sie tatsächlich erreichbar sind. Regional ausgesteuert, auf die konkrete Position zugeschnitten.",icon:"📡"},
+  {n:"02",title:"Interest",sub:"Aufmerksamkeit halten",desc:"Eine klare Landingpage zeigt sofort was Sie bieten: Gehalt, Firmenwagen, Urlaubstage, Arbeitszeiten. Kein generischer Text – sondern konkrete Vorteile die Kandidaten zum Bleiben bringen.",icon:"👁"},
+  {n:"03",title:"Consideration",sub:"Vertrauen aufbauen",desc:"Der Kandidat prüft ob er passt. Klare Kommunikation der Anforderungen, transparente Konditionen und ein professioneller erster Eindruck – das ist der Unterschied zwischen Absprung und Bewerbung.",icon:"🤔"},
+  {n:"04",title:"Application",sub:"Bewerbung in 60 Sekunden",desc:"Name und Telefonnummer – fertig. Kein Lebenslauf, kein langes Formular, kein Aufwand. Die Bewerberhürde ist minimal. Das Ergebnis: deutlich mehr Bewerbungen pro Tag.",icon:"⚡"},
+  {n:"05",title:"Selection",sub:"Automatische Vorqualifizierung",desc:"Jeder Bewerber durchläuft automatisch strukturierte Fragen per WhatsApp: Ausbildung oder Studium? Führerschein? Sprachkenntnisse? Berufserfahrung? Nur wer passt landet in Ihrem Prozess.",icon:"✅"},
+  {n:"06",title:"Hiring",sub:"Follow-up bis zum Gespräch",desc:"Schnelle Rückmeldung, strukturiertes Nachfassen, Terminvereinbarung. Kein Kandidat geht verloren weil niemand reagiert hat. Das System sorgt dafür dass aus Bewerbungen Gespräche werden.",icon:"🎯"},
 ];
 
 const COMPARISON = [
@@ -437,6 +454,8 @@ export default function App() {
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeBranche, setActiveBranche] = useState(0);
+  const [activePhase, setActivePhase] = useState(0);
   const [legalPage, setLegalPage] = useState(null);
   const [form, setForm] = useState({ name: "", unternehmen: "", email: "", telefon: "", positionen: "", kontaktweg: "", nachricht: "", website: "" });
   const [sent, setSent] = useState(false);
