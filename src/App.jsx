@@ -475,6 +475,12 @@ export default function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const now = Date.now();
+    if (now - lastSubmit < 60000) {
+      setError("Bitte warten Sie mindestens 1 Minute zwischen Anfragen.");
+      return;
+    }
+    setLastSubmit(now);
     setSending(true);
     setError("");
     try {
