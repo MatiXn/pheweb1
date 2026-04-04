@@ -461,6 +461,7 @@ export default function App() {
   const [form, setForm] = useState({ name: "", unternehmen: "", email: "", telefon: "", positionen: "", kontaktweg: "", nachricht: "", website: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [lastSubmit, setLastSubmit] = useState(0);
   const [error, setError] = useState("");
 
   useEffect(() => {
