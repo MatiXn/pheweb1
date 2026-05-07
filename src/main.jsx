@@ -1,24 +1,86 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
-import VacancyFunnelPage from "./pages/VacancyFunnelPage";
 import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
-import OnboardingPage from "./pages/OnboardingPage";
+import CandidateRegisterPage from "./pages/CandidateRegisterPage";
+import CompanyRegisterPage from "./pages/CompanyRegisterPage";
+import PendingApprovalPage from "./pages/PendingApprovalPage";
+import RecruiterRegisterPage from "./pages/RecruiterRegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AdminTotpSetupPage from "./pages/AdminTotpSetupPage";
+import AdminTotpVerifyPage from "./pages/AdminTotpVerifyPage";
+import KandidatOnboardingPage from "./pages/KandidatOnboardingPage";
+import KandidatDokumentePage from "./pages/KandidatDokumentePage";
+import KandidatEinwilligungPage from "./pages/KandidatEinwilligungPage";
+import KandidatProfilBearbeitenPage from "./pages/KandidatProfilBearbeitenPage";
+import UnternehmenProfilPage from "./pages/UnternehmenProfilPage";
+import UnternehmenStellAnlegenPage from "./pages/UnternehmenStellAnlegenPage";
+import UnternehmenStellenVerwaltenPage from "./pages/UnternehmenStellenVerwaltenPage";
+import UnternehmenStelleBearbeitenPage from "./pages/UnternehmenStelleBearbeitenPage";
+import AdminSkillsPage from "./pages/AdminSkillsPage";
+import AdminVerifizierungsQueuePage from "./pages/AdminVerifizierungsQueuePage";
+import AdminUnternehmenPage from "./pages/AdminUnternehmenPage";
+import AdminMonitoringPage from "./pages/AdminMonitoringPage";
+import UnternehmenMatchDashboardPage from "./pages/UnternehmenMatchDashboardPage";
+import UnternehmenAbonnementPage from "./pages/UnternehmenAbonnementPage";
+import RecruiterInteressentenPage from "./pages/RecruiterInteressentenPage";
+import { AuthProvider } from "./features/auth";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/funnel/:slug" element={<VacancyFunnelPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/onboarding" element={<OnboardingPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Root: redirect to login or role-based dashboard */}
+          <Route path="/" element={<App />} />
+
+          {/* Auth */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
+          <Route path="/passwort-zuruecksetzen" element={<ResetPasswordPage />} />
+
+          {/* Registrierung */}
+          <Route path="/registrieren/kandidat" element={<CandidateRegisterPage />} />
+          <Route path="/registrieren/unternehmen" element={<CompanyRegisterPage />} />
+          <Route path="/registrieren/recruiter" element={<RecruiterRegisterPage />} />
+
+          {/* Dashboard (role-based redirect) */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/warten" element={<ProtectedRoute><PendingApprovalPage /></ProtectedRoute>} />
+
+          {/* Admin */}
+          <Route path="/admin/totp-einrichten" element={<ProtectedRoute><AdminTotpSetupPage /></ProtectedRoute>} />
+          <Route path="/admin/totp-verify" element={<ProtectedRoute><AdminTotpVerifyPage /></ProtectedRoute>} />
+          <Route path="/admin/skills" element={<ProtectedRoute><AdminSkillsPage /></ProtectedRoute>} />
+          <Route path="/admin/verifizierung" element={<ProtectedRoute><AdminVerifizierungsQueuePage /></ProtectedRoute>} />
+          <Route path="/admin/unternehmen" element={<ProtectedRoute><AdminUnternehmenPage /></ProtectedRoute>} />
+          <Route path="/admin/monitoring" element={<ProtectedRoute><AdminMonitoringPage /></ProtectedRoute>} />
+
+          {/* Kandidat */}
+          <Route path="/kandidat/onboarding" element={<ProtectedRoute><KandidatOnboardingPage /></ProtectedRoute>} />
+          <Route path="/kandidat/dokumente" element={<ProtectedRoute><KandidatDokumentePage /></ProtectedRoute>} />
+          <Route path="/kandidat/einwilligung" element={<ProtectedRoute><KandidatEinwilligungPage /></ProtectedRoute>} />
+          <Route path="/kandidat/profil" element={<ProtectedRoute><KandidatProfilBearbeitenPage /></ProtectedRoute>} />
+
+          {/* Unternehmen */}
+          <Route path="/unternehmen/matches" element={<ProtectedRoute><UnternehmenMatchDashboardPage /></ProtectedRoute>} />
+          <Route path="/unternehmen/profil" element={<ProtectedRoute><UnternehmenProfilPage /></ProtectedRoute>} />
+          <Route path="/unternehmen/stelle-anlegen" element={<ProtectedRoute><UnternehmenStellAnlegenPage /></ProtectedRoute>} />
+          <Route path="/unternehmen/stellen-verwalten" element={<ProtectedRoute><UnternehmenStellenVerwaltenPage /></ProtectedRoute>} />
+          <Route path="/unternehmen/stelle-bearbeiten/:id" element={<ProtectedRoute><UnternehmenStelleBearbeitenPage /></ProtectedRoute>} />
+          <Route path="/unternehmen/abonnement" element={<ProtectedRoute><UnternehmenAbonnementPage /></ProtectedRoute>} />
+
+          {/* Recruiter */}
+          <Route path="/recruiter/interessenten" element={<ProtectedRoute><RecruiterInteressentenPage /></ProtectedRoute>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 );

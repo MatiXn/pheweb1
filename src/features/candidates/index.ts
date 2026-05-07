@@ -1,0 +1,13 @@
+// Public API dieses Features — wird mit jeder Story erweitert
+export { OnboardingWizard } from './components/OnboardingWizard'
+export { DocumentUpload } from './components/DocumentUpload'
+export { DsgvoConsentPage } from './components/DsgvoConsentPage'
+export { CandidateProfileEdit } from './components/CandidateProfileEdit'
+export { useOnboarding } from './hooks/useOnboarding'
+export { useDocumentUpload } from './hooks/useDocumentUpload'
+export { useDsgvoConsent } from './hooks/useDsgvoConsent'
+export { useProfileEdit } from './hooks/useProfileEdit'
+export type { WizardStep1Data, WizardStep2Data, WizardStep3Data, WizardStep4Data, Skill, OnboardingWizardProps } from './types'
+export type { DocumentType, UploadedDocument } from './types'
+export type { ProfileStatus } from './types'
+export type { ProfileEditData, ProfileEditState, AvailabilityStatus } from './hooks/useProfileEdit'
