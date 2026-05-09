@@ -24,14 +24,17 @@ export function useSubscription() {
     }
     const row = rows[0]
     setSubscription({
-      id:                   row.id as string,
-      tier:                 row.tier as SubscriptionTier,
-      status:               row.status as SubscriptionStatus,
-      stripeSubscriptionId: row.stripe_subscription_id as string | null,
-      stripeCustomerId:     row.stripe_customer_id as string | null,
-      currentPeriodStart:   row.current_period_start as string | null,
-      currentPeriodEnd:     row.current_period_end as string | null,
-      createdAt:            row.created_at as string,
+      id:                        row.id as string,
+      tier:                      row.tier as SubscriptionTier,
+      status:                    row.status as SubscriptionStatus,
+      stripeSubscriptionId:      row.stripe_subscription_id as string | null,
+      stripeCustomerId:          row.stripe_customer_id as string | null,
+      currentPeriodStart:        row.current_period_start as string | null,
+      currentPeriodEnd:          row.current_period_end as string | null,
+      createdAt:                 row.created_at as string,
+      bankTransferReference:     row.bank_transfer_reference as string | null,
+      bankTransferRequestedAt:   row.bank_transfer_requested_at as string | null,
+      expiresAt:                 row.expires_at as string | null,
     })
   }, [])
 

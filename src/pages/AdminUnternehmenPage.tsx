@@ -6,7 +6,9 @@ import { Navigate } from 'react-router-dom'
 import { useCurrentUser } from '../features/auth/hooks/useCurrentUser'
 import { useAdminCompanyQueue } from '../features/admin/hooks/useAdminCompanyQueue'
 import { useAdminCompanyAction } from '../features/admin/hooks/useAdminCompanyAction'
+import { useAdminBankTransfers } from '../features/admin/hooks/useAdminBankTransfers'
 import type { AdminCompanyQueueEntry } from '../features/admin/types'
+import type { PendingBankTransfer } from '../features/admin/hooks/useAdminBankTransfers'
 import { AppShell } from '../components/AppShell'
 
 const C = {
@@ -44,6 +46,7 @@ export default function AdminUnternehmenPage() {
   const { entries, isLoading, error, refetch } = useAdminCompanyQueue()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { isProcessing, error: actionError, activate, freeze, block } = useAdminCompanyAction()
+  const { hasPendingTransfer, isConfirming, confirmTransfer } = useAdminBankTransfers()
 
   // Zugriffsprüfung
   if (userLoading) return null
@@ -79,6 +82,7 @@ export default function AdminUnternehmenPage() {
                   key={entry.companyId}
                   entry={entry}
                   isSelected={entry.companyId === selectedId}
+                  pendingTransfer={hasPendingTransfer(entry.companyId)}
                   onClick={() => {
                     setSelectedId(prev => prev === entry.companyId ? null : entry.companyId)
                   }}
@@ -91,13 +95,15 @@ export default function AdminUnternehmenPage() {
               <CompanyDetailPanel
                 key={selectedEntry.companyId}
                 entry={selectedEntry}
+                pendingTransfer={hasPendingTransfer(selectedEntry.companyId)}
                 onClose={() => setSelectedId(null)}
                 activate={activate}
                 freeze={freeze}
                 block={block}
-                isProcessing={isProcessing}
+                isProcessing={isProcessing || isConfirming}
                 actionError={actionError}
                 onActionSuccess={() => { setSelectedId(null); refetch() }}
+                confirmTransfer={confirmTransfer}
               />
             )}
           </div>
@@ -111,10 +117,12 @@ export default function AdminUnternehmenPage() {
 function CompanyQueueCard({
   entry,
   isSelected,
+  pendingTransfer,
   onClick,
 }: {
   entry: AdminCompanyQueueEntry
   isSelected: boolean
+  pendingTransfer: PendingBankTransfer | undefined
   onClick: () => void
 }) {
   return (
@@ -141,6 +149,16 @@ function CompanyQueueCard({
             {entry.companyName}
           </span>
           <StatusBadge status={entry.accountStatus} />
+          {pendingTransfer && (
+            <span style={{
+              fontFamily: F, fontSize: 11, fontWeight: 700,
+              padding: '2px 8px', borderRadius: 6,
+              background: '#fffbeb', color: '#92400e',
+              border: '1px solid #fcd34d',
+            }}>
+              Bank-Transfer ausstehend
+            </span>
+          )}
         </div>
         <span style={{ fontFamily: F, fontSize: 13, color: C.muted }}>
           {[entry.industry, entry.size].filter(Boolean).join(' · ')}
@@ -164,6 +182,7 @@ function CompanyQueueCard({
 
 function CompanyDetailPanel({
   entry,
+  pendingTransfer,
   onClose,
   activate,
   freeze,
@@ -171,8 +190,10 @@ function CompanyDetailPanel({
   isProcessing,
   actionError,
   onActionSuccess,
+  confirmTransfer,
 }: {
   entry: AdminCompanyQueueEntry
+  pendingTransfer: PendingBankTransfer | undefined
   onClose: () => void
   activate: (companyId: string) => Promise<void>
   freeze: (companyId: string) => Promise<void>
@@ -180,6 +201,7 @@ function CompanyDetailPanel({
   isProcessing: boolean
   actionError: string | null
   onActionSuccess: () => void
+  confirmTransfer: (subscriptionId: string) => Promise<boolean>
 }) {
   const [blockMode, setBlockMode] = useState(false)
   const [blockReasonText, setBlockReasonText] = useState('')
@@ -263,6 +285,27 @@ function CompanyDetailPanel({
         <Field label="Wartezeit" value={daysSince(entry.createdAt)} />
         <Field label="Status" value={<StatusBadge status={entry.accountStatus} />} />
       </Section>
+
+      {/* Banküberweisung — nur wenn ausstehend */}
+      {pendingTransfer && (
+        <Section title="Bank-Transfer ausstehend">
+          <div style={{
+            background: '#fffbeb', border: '1px solid #fcd34d',
+            borderRadius: 8, padding: 12, marginBottom: 12,
+          }}>
+            <Field label="Tier" value={pendingTransfer.tier.toUpperCase()} />
+            <Field label="Referenz" value={<span style={{ fontFamily: 'monospace', fontSize: 11 }}>{pendingTransfer.reference}</span>} />
+            <Field label="Angefordert" value={new Date(pendingTransfer.requestedAt).toLocaleDateString('de-DE')} />
+            <Field label="Frist" value={new Date(pendingTransfer.expiresAt).toLocaleDateString('de-DE')} />
+          </div>
+          <BankTransferConfirmButton
+            subscriptionId={pendingTransfer.subscriptionId}
+            isProcessing={isProcessing}
+            confirmTransfer={confirmTransfer}
+            onSuccess={onActionSuccess}
+          />
+        </Section>
+      )}
 
       {/* Entscheidung */}
       <Section title="Entscheidung">
@@ -419,6 +462,79 @@ function CompanyDetailPanel({
           </div>
         )}
       </Section>
+    </div>
+  )
+}
+
+// ── Bank-Transfer-Bestätigen-Button ────────────────────────────────────────
+
+function BankTransferConfirmButton({
+  subscriptionId,
+  isProcessing,
+  confirmTransfer,
+  onSuccess,
+}: {
+  subscriptionId: string
+  isProcessing: boolean
+  confirmTransfer: (subId: string) => Promise<boolean>
+  onSuccess: () => void
+}) {
+  const [confirmMode, setConfirmMode] = useState(false)
+
+  if (!confirmMode) {
+    return (
+      <button
+        onClick={() => setConfirmMode(true)}
+        disabled={isProcessing}
+        style={{
+          width: '100%', fontFamily: F, fontSize: 14, fontWeight: 700,
+          padding: '10px 0', borderRadius: 10,
+          cursor: isProcessing ? 'default' : 'pointer',
+          background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #86efac',
+          opacity: isProcessing ? 0.7 : 1,
+        } as CSSProperties}
+      >
+        ✓ Zahlung bestätigen
+      </button>
+    )
+  }
+
+  return (
+    <div>
+      <div style={{ fontFamily: F, fontSize: 13, color: '#92400e', fontWeight: 600, marginBottom: 10 }}>
+        Zahlung wirklich bestätigen? Das Unternehmen wird sofort freigeschaltet.
+      </div>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button
+          onClick={async () => {
+            const ok = await confirmTransfer(subscriptionId)
+            if (ok) onSuccess()
+          }}
+          disabled={isProcessing}
+          style={{
+            flex: 1, fontFamily: F, fontSize: 14, fontWeight: 700,
+            padding: '10px 0', borderRadius: 10,
+            cursor: isProcessing ? 'default' : 'pointer',
+            background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #86efac',
+            opacity: isProcessing ? 0.5 : 1,
+          } as CSSProperties}
+        >
+          {isProcessing ? 'Wird verarbeitet…' : 'Bestätigen'}
+        </button>
+        <button
+          onClick={() => setConfirmMode(false)}
+          disabled={isProcessing}
+          style={{
+            fontFamily: F, fontSize: 13, fontWeight: 600,
+            padding: '10px 16px', borderRadius: 10,
+            cursor: isProcessing ? 'default' : 'pointer',
+            background: 'none', color: C.muted,
+            border: `1px solid ${C.borderMd}`,
+          } as CSSProperties}
+        >
+          Abbrechen
+        </button>
+      </div>
     </div>
   )
 }

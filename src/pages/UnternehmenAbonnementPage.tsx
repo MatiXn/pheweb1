@@ -6,6 +6,7 @@ import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../features/auth'
 import { useCurrentUser } from '../features/auth/hooks/useCurrentUser'
 import { useSubscription } from '../features/companies/hooks/useSubscription'
+import { useBankTransfer } from '../features/companies/hooks/useBankTransfer'
 import { AppShell } from '../components/AppShell'
 import type { SubscriptionTier } from '../features/companies/types'
 
@@ -24,6 +25,8 @@ const C = {
   greenBg:  '#ecfdf5',
   greenBd:  '#a7f3d0',
   amber:    '#f59e0b',
+  amberBg:  '#fffbeb',
+  amberBd:  '#fde68a',
   red:      '#dc2626',
   redBg:    '#fef2f2',
   redBd:    '#fecaca',
@@ -54,10 +57,11 @@ const TIERS: TierConfig[] = [
 ]
 
 const STATUS_LABEL: Record<string, string> = {
-  aktiv: 'Aktiv', ablaufend: 'Läuft bald ab', abgelaufen: 'Abgelaufen', eingefroren: 'Eingefroren',
+  aktiv: 'Aktiv', ablaufend: 'Läuft bald ab', abgelaufen: 'Abgelaufen',
+  eingefroren: 'Eingefroren', ausstehend_zahlung: 'Zahlung ausstehend',
 }
 
-function fmtDate(iso: string | null) {
+function fmtDate(iso: string | null | undefined) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
@@ -70,11 +74,17 @@ export default function UnternehmenAbonnementPage() {
   const { user }    = useAuthContext()
   const { profile, isLoading: profileLoading } = useCurrentUser()
   const { subscription, isLoading: subLoading, error: subError, refetch, createCheckoutSession } = useSubscription()
+  const { isLoading: btLoading, error: btError, initiateBankTransfer } = useBankTransfer()
   const [searchParams]  = useSearchParams()
   const [checkoutTier, setCheckoutTier]   = useState<SubscriptionTier | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [btDialogTier, setBtDialogTier]   = useState<SubscriptionTier | null>(null)
+  const [btSuccess, setBtSuccess]         = useState(false)
 
   const statusParam = searchParams.get('status')
+
+  // Gibt es eine ausstehende Banküberweisung?
+  const hasPendingBankTransfer = subscription?.status === 'ausstehend_zahlung'
 
   useEffect(() => {
     if (statusParam === 'success') void refetch()
@@ -95,6 +105,16 @@ export default function UnternehmenAbonnementPage() {
     }
   }
 
+  async function handleBankTransferConfirm() {
+    if (!btDialogTier) return
+    const subId = await initiateBankTransfer(btDialogTier)
+    if (subId) {
+      setBtDialogTier(null)
+      setBtSuccess(true)
+      await refetch()
+    }
+  }
+
   return (
     <AppShell>
       {/* Page header */}
@@ -103,7 +123,7 @@ export default function UnternehmenAbonnementPage() {
           Abonnement
         </h1>
         <p style={{ fontSize: 14, color: C.faint, fontFamily: F }}>
-          Wählen Sie Ihren Plan und zahlen Sie sicher über Stripe.
+          Wählen Sie Ihren Plan — Zahlung per Stripe oder Banküberweisung.
         </p>
       </div>
 
@@ -123,8 +143,40 @@ export default function UnternehmenAbonnementPage() {
         </div>
       )}
 
+      {/* Bank Transfer Success Banner */}
+      {btSuccess && (
+        <div style={{ backgroundColor: C.greenBg, border: `1px solid ${C.greenBd}`, borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span style={{ fontSize: 20, flexShrink: 0 }}>✉</span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.green, fontFamily: F }}>Banküberweisung initiiert</div>
+            <div style={{ fontSize: 13, color: C.green, fontFamily: F, marginTop: 2, opacity: 0.8 }}>
+              Zahlungsanweisungen mit IBAN, BIC und Verwendungszweck wurden an Ihre E-Mail-Adresse gesendet.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Ausstehende Banküberweisung Banner */}
+      {hasPendingBankTransfer && subscription && (
+        <div style={{ backgroundColor: C.amberBg, border: `1px solid ${C.amberBd}`, borderRadius: 12, padding: '16px 20px', marginBottom: 24 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#92400e', fontFamily: F, marginBottom: 4 }}>
+            Banküberweisung ausstehend
+          </div>
+          <div style={{ fontSize: 13, color: '#92400e', fontFamily: F, lineHeight: 1.6 }}>
+            Wir warten auf Ihren Zahlungseingang.{' '}
+            {subscription.bankTransferReference && (
+              <>Verwendungszweck: <strong style={{ fontFamily: 'monospace' }}>{subscription.bankTransferReference}</strong> — </>
+            )}
+            Frist: <strong>{fmtDate(subscription.expiresAt)}</strong>
+          </div>
+          <div style={{ fontSize: 12, color: '#92400e', fontFamily: F, marginTop: 8, opacity: 0.8 }}>
+            Nach Zahlungseingang wird Ihr Konto freigeschaltet. Sie erhalten eine Bestätigungs-E-Mail.
+          </div>
+        </div>
+      )}
+
       {/* Active subscription card */}
-      {!subLoading && subscription && (
+      {!subLoading && subscription && subscription.status !== 'ausstehend_zahlung' && (
         <div style={{
           backgroundColor: C.white, borderRadius: 14, border: `1px solid ${C.border}`,
           padding: '20px 24px', marginBottom: 36,
@@ -140,7 +192,7 @@ export default function UnternehmenAbonnementPage() {
               value={STATUS_LABEL[subscription.status] ?? subscription.status}
               valueColor={subscription.status === 'aktiv' ? C.green : C.amber}
             />
-            <SubscriptionField label="Läuft ab am" value={fmtDate(subscription.currentPeriodEnd)} />
+            <SubscriptionField label="Läuft ab am" value={fmtDate(subscription.currentPeriodEnd ?? subscription.expiresAt)} />
           </div>
         </div>
       )}
@@ -156,6 +208,11 @@ export default function UnternehmenAbonnementPage() {
           Fehler: {checkoutError}
         </div>
       )}
+      {btError && (
+        <div style={{ backgroundColor: C.redBg, border: `1px solid ${C.redBd}`, borderRadius: 10, padding: '12px 16px', marginBottom: 24, fontSize: 13, color: C.red, fontFamily: F }}>
+          Fehler: {btError}
+        </div>
+      )}
 
       {/* Tier section header */}
       <div style={{ marginBottom: 20 }}>
@@ -167,6 +224,7 @@ export default function UnternehmenAbonnementPage() {
         {TIERS.map(t => {
           const isCurrent    = subscription?.tier === t.tier && subscription?.status === 'aktiv'
           const isProcessing = checkoutTier === t.tier
+          const stripeDisabled = hasPendingBankTransfer || checkoutTier !== null
 
           return (
             <div key={t.tier} style={{
@@ -221,28 +279,55 @@ export default function UnternehmenAbonnementPage() {
                 ))}
               </ul>
 
-              {/* CTA */}
-              <button
-                type="button"
-                onClick={() => { void handleCheckout(t.tier) }}
-                disabled={isCurrent || checkoutTier !== null}
-                style={{
-                  marginTop:       'auto',
-                  padding:         '11px 0',
-                  backgroundColor: isCurrent ? C.accentBg : C.accent,
-                  color:           isCurrent ? C.accent : '#fff',
-                  border:          isCurrent ? `1px solid #bfdbfe` : 'none',
-                  borderRadius:    10,
-                  fontSize:        14,
-                  fontWeight:      600,
-                  fontFamily:      F,
-                  cursor:          isCurrent || checkoutTier !== null ? 'not-allowed' : 'pointer',
-                  opacity:         checkoutTier !== null && checkoutTier !== t.tier ? 0.5 : 1,
-                  transition:      'all 0.15s',
-                }}
-              >
-                {isCurrent ? 'Aktueller Plan' : isProcessing ? 'Weiterleitung zu Stripe…' : 'Jetzt buchen'}
-              </button>
+              {/* CTAs */}
+              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {/* Stripe Checkout Button */}
+                <button
+                  type="button"
+                  onClick={() => { void handleCheckout(t.tier) }}
+                  disabled={isCurrent || stripeDisabled}
+                  title={hasPendingBankTransfer ? 'Nicht verfügbar während Banküberweisung ausstehend' : undefined}
+                  style={{
+                    padding:         '11px 0',
+                    backgroundColor: isCurrent ? C.accentBg : C.accent,
+                    color:           isCurrent ? C.accent : '#fff',
+                    border:          isCurrent ? `1px solid #bfdbfe` : 'none',
+                    borderRadius:    10,
+                    fontSize:        14,
+                    fontWeight:      600,
+                    fontFamily:      F,
+                    cursor:          isCurrent || stripeDisabled ? 'not-allowed' : 'pointer',
+                    opacity:         stripeDisabled && !isCurrent ? 0.4 : 1,
+                    transition:      'all 0.15s',
+                  }}
+                >
+                  {isCurrent ? 'Aktueller Plan' : isProcessing ? 'Weiterleitung zu Stripe…' : 'Per Kreditkarte buchen'}
+                </button>
+
+                {/* Banküberweisung Button — nur wenn kein aktiver Plan und keine ausstehende Überweisung */}
+                {!isCurrent && !hasPendingBankTransfer && (
+                  <button
+                    type="button"
+                    onClick={() => { setBtDialogTier(t.tier) }}
+                    disabled={btLoading || checkoutTier !== null}
+                    style={{
+                      padding:         '10px 0',
+                      backgroundColor: 'transparent',
+                      color:           C.muted,
+                      border:          `1px solid ${C.border}`,
+                      borderRadius:    10,
+                      fontSize:        13,
+                      fontWeight:      500,
+                      fontFamily:      F,
+                      cursor:          btLoading || checkoutTier !== null ? 'not-allowed' : 'pointer',
+                      opacity:         btLoading || checkoutTier !== null ? 0.5 : 1,
+                      transition:      'all 0.15s',
+                    }}
+                  >
+                    Per Banküberweisung zahlen
+                  </button>
+                )}
+              </div>
             </div>
           )
         })}
@@ -250,13 +335,122 @@ export default function UnternehmenAbonnementPage() {
 
       {/* Footer note */}
       <div style={{ fontSize: 12, color: C.faint, fontFamily: F, lineHeight: 1.7 }}>
-        <p style={{ margin: '0 0 4px' }}>Zahlung wird sicher über Stripe abgewickelt. Keine Kreditkartendaten werden auf unseren Servern gespeichert.</p>
+        <p style={{ margin: '0 0 4px' }}>Kreditkartenzahlung wird sicher über Stripe abgewickelt. Keine Kreditkartendaten werden auf unseren Servern gespeichert.</p>
         <p style={{ margin: 0 }}>
           Bei Fragen:{' '}
           <a href="mailto:support@pheweb.de" style={{ color: C.accent, textDecoration: 'none', fontWeight: 600 }}>support@pheweb.de</a>
         </p>
       </div>
+
+      {/* Banküberweisung Bestätigungs-Dialog */}
+      {btDialogTier && (
+        <BankTransferDialog
+          tier={btDialogTier}
+          onConfirm={() => { void handleBankTransferConfirm() }}
+          onCancel={() => { setBtDialogTier(null) }}
+          isLoading={btLoading}
+        />
+      )}
     </AppShell>
+  )
+}
+
+// ── Banküberweisung Dialog ──────────────────────────────────────────────────
+
+const TIER_LABELS: Record<string, string> = { basis: 'Basis', professional: 'Professional', enterprise: 'Enterprise' }
+const TIER_PRICES: Record<string, number>  = { basis: 700, professional: 1400, enterprise: 2100 }
+
+const IBAN = 'DE89 3704 0044 0532 0130 00'
+const BIC  = 'COBADEFFXXX'
+
+function BankTransferDialog({
+  tier, onConfirm, onCancel, isLoading,
+}: {
+  tier: SubscriptionTier
+  onConfirm: () => void
+  onCancel: () => void
+  isLoading: boolean
+}) {
+  const label  = TIER_LABELS[tier] ?? tier
+  const price  = TIER_PRICES[tier] ?? 0
+  const deadline = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    .toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.5)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 1000, padding: 16,
+    }}>
+      <div style={{
+        backgroundColor: C.white, borderRadius: 16, padding: 32,
+        maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(15,23,42,0.2)',
+      }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: C.text, fontFamily: F, margin: '0 0 8px' }}>
+          Per Banküberweisung zahlen
+        </h3>
+        <p style={{ fontSize: 13, color: C.muted, fontFamily: F, margin: '0 0 24px' }}>
+          Plan: <strong>{label}</strong> — {fmtEur(price)} / Quartal
+        </p>
+
+        <div style={{ backgroundColor: C.bg, borderRadius: 10, padding: 20, marginBottom: 20 }}>
+          <BankRow label="Empfänger" value="PHE Perm GmbH" />
+          <BankRow label="IBAN" value={IBAN} mono />
+          <BankRow label="BIC" value={BIC} mono />
+          <BankRow label="Betrag" value={`${fmtEur(price)}`} highlight />
+          <BankRow label="Zahlungsfrist" value={deadline} />
+        </div>
+
+        <div style={{ backgroundColor: C.amberBg, border: `1px solid ${C.amberBd}`, borderRadius: 8, padding: 12, marginBottom: 24, fontSize: 12, color: '#92400e', fontFamily: F }}>
+          Nach Bestätigung erhalten Sie eine E-Mail mit dem vollständigen Verwendungszweck.
+          Ihr Konto wird nach Zahlungseingang freigeschaltet.
+        </div>
+
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isLoading}
+            style={{
+              flex: 1, padding: '11px 0', backgroundColor: 'transparent',
+              border: `1px solid ${C.border}`, borderRadius: 10,
+              fontSize: 14, fontWeight: 600, fontFamily: F, color: C.muted,
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            Abbrechen
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isLoading}
+            style={{
+              flex: 1, padding: '11px 0', backgroundColor: C.accent,
+              border: 'none', borderRadius: 10,
+              fontSize: 14, fontWeight: 600, fontFamily: F, color: '#fff',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              opacity: isLoading ? 0.7 : 1,
+            }}
+          >
+            {isLoading ? 'Wird verarbeitet…' : 'Überweisung initiieren'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BankRow({ label, value, mono, highlight }: { label: string; value: string; mono?: boolean; highlight?: boolean }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '6px 0', borderBottom: `1px solid ${C.border}` }}>
+      <span style={{ fontSize: 12, color: C.faint, fontFamily: F }}>{label}</span>
+      <span style={{
+        fontSize: 13, fontWeight: highlight ? 700 : 500,
+        fontFamily: mono ? 'monospace' : F,
+        color: highlight ? C.accent : C.text,
+        textAlign: 'right',
+      }}>{value}</span>
+    </div>
   )
 }
 
