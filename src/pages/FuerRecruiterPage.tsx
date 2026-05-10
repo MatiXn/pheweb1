@@ -39,7 +39,7 @@ function Nav() {
           <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em', fontFamily: F, color: scrolled ? '#0f172a' : '#f1f5f9' }}>phe<span style={{ color: '#60a5fa' }}>web</span></span>
         </Link>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/login" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>Anmelden</Link>
+          <Link to="/login?from=recruiter" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>Anmelden</Link>
           <Link to="/registrieren/recruiter" className="rb-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '9px 22px', borderRadius: 10, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', boxShadow: '0 2px 12px rgba(5,150,105,0.4)' }}>
             Recruiter werden →
           </Link>

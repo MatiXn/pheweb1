@@ -38,11 +38,13 @@ import RecruiterKandidatenPage from "./pages/RecruiterKandidatenPage";
 import KandidatDatenschutzPage from "./pages/KandidatDatenschutzPage";
 import { AuthProvider } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PageTransition } from "./components/PageTransition";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
+        <PageTransition>
         <Routes>
           {/* Startseite & Marketing */}
           <Route path="/" element={<App />} />
@@ -98,6 +100,7 @@ createRoot(document.getElementById("root")).render(
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </PageTransition>
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>

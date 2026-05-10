@@ -57,7 +57,7 @@ function Nav() {
           </span>
         </Link>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/login" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>
+          <Link to="/login?from=unternehmen" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>
             Anmelden
           </Link>
           <Link to="/registrieren/unternehmen" className="ub-btn" style={{
