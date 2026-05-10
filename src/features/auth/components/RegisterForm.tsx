@@ -4,45 +4,32 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import type { RegisterFormData } from '../types'
 
+const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+
 const C = {
-  accent: '#3b72b8',
-  text: '#0f1623',
-  muted: '#4b5675',
-  faint: '#8b9ab1',
-  border: 'rgba(15,22,35,0.08)',
-  red: '#dc2626',
-  green: '#16a34a',
-  greenBg: '#dcfce7',
-  greenBd: '#86efac',
-  shadowLg: '0 20px 60px rgba(59,114,184,0.12)',
+  accent:   '#2563eb',
+  text:     '#0f172a',
+  muted:    '#475569',
+  faint:    '#94a3b8',
+  border:   '#e2e8f0',
+  error:    '#dc2626',
+  errorBg:  '#fef2f2',
+  errorBd:  '#fecaca',
+  green:    '#16a34a',
+  greenBg:  '#f0fdf4',
+  greenBd:  '#86efac',
 }
 
-const F = "'Helvetica Neue', Helvetica, Arial, sans-serif"
-
-const INP_BASE: React.CSSProperties = {
-  width: '100%',
-  background: '#f5f7fa',
-  border: `1.5px solid ${C.border}`,
-  borderRadius: 12,
-  padding: '13px 16px',
-  fontSize: 15,
-  color: C.text,
-  outline: 'none',
-  fontFamily: F,
-  boxSizing: 'border-box',
-}
-
-const INP_ERROR: React.CSSProperties = {
-  ...INP_BASE,
-  border: `1.5px solid ${C.red}`,
-}
+const inp = (hasErr: boolean): React.CSSProperties => ({
+  width: '100%', padding: '11px 14px', fontSize: 15,
+  fontFamily: F, color: C.text, background: '#f8fafc',
+  border: `1.5px solid ${hasErr ? C.error : C.border}`,
+  borderRadius: 10, outline: 'none', boxSizing: 'border-box',
+  transition: 'border-color 0.15s',
+})
 
 export function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>()
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>()
   const { signUp, isLoading, error } = useAuth()
   const [success, setSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -52,246 +39,200 @@ export function RegisterForm() {
     try {
       const ok = await signUp(data.email, data.password)
       if (ok) setSuccess(true)
-    } catch (err) {
+    } catch {
       setSubmitError('Netzwerkfehler. Bitte versuchen Sie es erneut.')
     }
   }
 
-  if (success) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#f5f7fa',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 24,
-          fontFamily: F,
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            maxWidth: 440,
-            background: '#fff',
-            borderRadius: 20,
-            padding: 36,
-            boxShadow: C.shadowLg,
-            textAlign: 'center',
-          }}
-        >
-          <div
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              background: C.greenBg,
-              border: `2px solid ${C.greenBd}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px',
-              fontSize: 26,
-              color: C.green,
-            }}
-          >
-            ✓
-          </div>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: C.text, marginBottom: 12 }}>
-            Registrierung erfolgreich
-          </h2>
-          <p style={{ fontSize: 15, color: C.muted, lineHeight: 1.7, marginBottom: 24 }}>
-            Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen eine E-Mail geschickt.
-          </p>
-          <Link
-            to="/login"
-            style={{
-              display: 'inline-block',
-              background: C.accent,
-              color: '#fff',
-              borderRadius: 12,
-              padding: '13px 28px',
-              fontSize: 15,
-              fontWeight: 700,
-              textDecoration: 'none',
-            }}
-          >
-            Zur Anmeldung
-          </Link>
-        </div>
+  const PageShell = ({ children }: { children: React.ReactNode }) => (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0f172a 100%)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24, fontFamily: F, position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Decorative orbs */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', top: '-20%', right: '-10%',
+          width: 500, height: 500, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-15%', left: '-10%',
+          width: 400, height: 400, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+        }} />
       </div>
-    )
-  }
 
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#f5f7fa',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: F,
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: 440 }}>
+      <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 1 }}>
+        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link
-            to="/"
-            style={{
-              fontFamily: F,
-              fontSize: 28,
-              fontWeight: 800,
-              color: C.text,
-              textDecoration: 'none',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            phe<em style={{ fontStyle: 'italic', color: C.accent }}>web</em>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <span style={{
+              fontSize: 28, fontWeight: 800, letterSpacing: '-0.04em',
+              color: '#f1f5f9', fontFamily: F,
+            }}>
+              phe<span style={{ color: '#60a5fa' }}>web</span>
+            </span>
           </Link>
-          <p style={{ marginTop: 8, fontSize: 15, color: C.muted }}>
+          <p style={{ marginTop: 6, fontSize: 12, color: 'rgba(148,163,184,0.7)',
+            fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
             Als Kandidat registrieren
           </p>
         </div>
 
-        <div
-          style={{
-            background: '#fff',
-            borderRadius: 20,
-            padding: 36,
-            boxShadow: C.shadowLg,
-            border: `1px solid ${C.border}`,
-          }}
-        >
-          <h1
-            style={{
-              fontSize: 22,
-              fontWeight: 800,
-              color: C.text,
-              marginBottom: 8,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Konto erstellen
-          </h1>
-          <p style={{ fontSize: 13, color: C.faint, marginBottom: 24, lineHeight: 1.6 }}>
-            Registrieren Sie sich, um Ihr Profil anzulegen.
-          </p>
+        {children}
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <label
-              htmlFor="email"
-              style={{ fontSize: 13, fontWeight: 600, color: C.muted, display: 'block', marginBottom: 6 }}
-            >
-              E-Mail-Adresse *
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder="ihre@email.de"
-              style={errors.email ? INP_ERROR : { ...INP_BASE, marginBottom: 4 }}
-              {...register('email', {
-                required: 'E-Mail-Adresse ist erforderlich',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-                  message: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
-                },
-              })}
-            />
-            {errors.email && (
-              <p role="alert" style={{ fontSize: 12, color: C.red, marginBottom: 12, marginTop: 4 }}>
-                {errors.email.message}
-              </p>
-            )}
-            {!errors.email && <div style={{ marginBottom: 12 }} />}
-
-            <label
-              htmlFor="password"
-              style={{ fontSize: 13, fontWeight: 600, color: C.muted, display: 'block', marginBottom: 6 }}
-            >
-              Passwort *
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Mindestens 8 Zeichen"
-              maxLength={72}
-              style={errors.password ? INP_ERROR : { ...INP_BASE, marginBottom: 4 }}
-              {...register('password', {
-                required: 'Passwort ist erforderlich',
-                minLength: {
-                  value: 8,
-                  message: 'Passwort muss mindestens 8 Zeichen lang sein',
-                },
-                maxLength: {
-                  value: 72,
-                  message: 'Passwort darf maximal 72 Zeichen haben.',
-                },
-              })}
-            />
-            {errors.password && (
-              <p role="alert" style={{ fontSize: 12, color: C.red, marginBottom: 12, marginTop: 4 }}>
-                {errors.password.message}
-              </p>
-            )}
-            {!errors.password && <div style={{ marginBottom: 12 }} />}
-
-            {(error || submitError) && (
-              <div
-                role="alert"
-                aria-live="polite"
-                style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
-                  borderRadius: 10,
-                  padding: '12px 14px',
-                  marginBottom: 16,
-                }}
-              >
-                <p style={{ fontSize: 13, color: C.red, lineHeight: 1.5 }}>{error ?? submitError}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              style={{
-                width: '100%',
-                marginTop: 8,
-                background: C.accent,
-                color: '#fff',
-                border: 'none',
-                borderRadius: 12,
-                padding: '14px 20px',
-                fontSize: 15,
-                fontWeight: 700,
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                fontFamily: F,
-                opacity: isLoading ? 0.75 : 1,
-              }}
-            >
-              {isLoading ? 'Wird registriert...' : 'Konto erstellen'}
-            </button>
-          </form>
-
-          <p style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: C.faint }}>
-            Bereits ein Konto?{' '}
-            <Link to="/login" style={{ color: C.accent, fontWeight: 600, textDecoration: 'none' }}>
-              Anmelden
-            </Link>
-          </p>
-        </div>
-
-        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: C.faint }}>
-          <Link to="/" style={{ color: C.faint, textDecoration: 'none' }}>
-            ← Zurück zu pheweb.de
-          </Link>
+        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 12, color: 'rgba(148,163,184,0.4)' }}>
+          © {new Date().getFullYear()} pheweb — Fachkräfte-Plattform
         </p>
       </div>
     </div>
+  )
+
+  if (success) {
+    return (
+      <PageShell>
+        <div style={{
+          background: '#ffffff', borderRadius: 24,
+          padding: '40px 36px', textAlign: 'center',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15)',
+          border: '1px solid rgba(255,255,255,0.9)',
+        }}>
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%',
+            background: C.greenBg, border: `2px solid ${C.greenBd}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 20px', fontSize: 28, color: C.green,
+          }}>✓</div>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: C.text, marginBottom: 10, letterSpacing: '-0.03em' }}>
+            Registrierung erfolgreich
+          </h2>
+          <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 28 }}>
+            Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen eine E-Mail geschickt.
+          </p>
+          <Link to="/login" style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+            color: '#fff', borderRadius: 12, padding: '13px 32px',
+            fontSize: 15, fontWeight: 700, textDecoration: 'none',
+            boxShadow: '0 4px 12px rgba(37,99,235,0.35)',
+          }}>
+            Zur Anmeldung
+          </Link>
+        </div>
+      </PageShell>
+    )
+  }
+
+  return (
+    <PageShell>
+      <div style={{
+        background: '#ffffff', borderRadius: 24,
+        padding: '40px 36px',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15)',
+        border: '1px solid rgba(255,255,255,0.9)',
+      }}>
+        <h1 style={{
+          fontSize: 24, fontWeight: 800, color: C.text,
+          marginBottom: 6, letterSpacing: '-0.03em', lineHeight: 1.2,
+        }}>
+          Konto erstellen
+        </h1>
+        <p style={{ fontSize: 14, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>
+          Registrieren Sie sich, um Ihr Profil anzulegen.
+        </p>
+
+        <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+          {/* Email */}
+          <div style={{ marginBottom: 16 }}>
+            <label htmlFor="email" style={{
+              display: 'block', fontSize: 13, fontWeight: 600,
+              color: C.muted, marginBottom: 6, fontFamily: F,
+            }}>E-Mail-Adresse</label>
+            <input
+              id="email" type="email" autoComplete="email"
+              placeholder="ihre@email.de"
+              style={inp(!!errors.email)}
+              {...register('email', {
+                required: 'E-Mail-Adresse ist erforderlich',
+                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, message: 'Ungültige E-Mail-Adresse' },
+              })}
+            />
+            {errors.email && (
+              <p role="alert" style={{ fontSize: 12, color: C.error, marginTop: 4, fontFamily: F }}>
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div style={{ marginBottom: 24 }}>
+            <label htmlFor="password" style={{
+              display: 'block', fontSize: 13, fontWeight: 600,
+              color: C.muted, marginBottom: 6, fontFamily: F,
+            }}>Passwort</label>
+            <input
+              id="password" type="password" autoComplete="new-password"
+              placeholder="Mindestens 8 Zeichen" maxLength={72}
+              style={inp(!!errors.password)}
+              {...register('password', {
+                required: 'Passwort ist erforderlich',
+                minLength: { value: 8, message: 'Passwort muss mindestens 8 Zeichen lang sein' },
+                maxLength: { value: 72, message: 'Passwort darf maximal 72 Zeichen haben.' },
+              })}
+            />
+            {errors.password && (
+              <p role="alert" style={{ fontSize: 12, color: C.error, marginTop: 4, fontFamily: F }}>
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* API error */}
+          {(error || submitError) && (
+            <div role="alert" aria-live="polite" style={{
+              background: C.errorBg, border: `1px solid ${C.errorBd}`,
+              borderRadius: 10, padding: '10px 14px', marginBottom: 16,
+              fontSize: 13, color: C.error, fontFamily: F, lineHeight: 1.5,
+            }}>
+              {error ?? submitError}
+            </div>
+          )}
+
+          <button type="submit" disabled={isLoading} style={{
+            width: '100%', padding: '12px 20px',
+            background: isLoading ? '#93c5fd' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+            color: '#fff', border: 'none', borderRadius: 12,
+            fontSize: 15, fontWeight: 700, fontFamily: F,
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            letterSpacing: '-0.01em',
+            boxShadow: isLoading ? 'none' : '0 4px 12px rgba(37,99,235,0.35)',
+            transition: 'all 0.2s',
+          }}>
+            {isLoading ? 'Wird registriert…' : 'Konto erstellen'}
+          </button>
+        </form>
+
+        <div style={{
+          marginTop: 24, paddingTop: 20,
+          borderTop: '1px solid #f1f5f9',
+          textAlign: 'center', fontSize: 13, color: C.faint, lineHeight: 1.6,
+        }}>
+          Bereits ein Konto?{' '}
+          <Link to="/login" style={{ color: C.accent, fontWeight: 600 }}>
+            Anmelden
+          </Link>
+        </div>
+      </div>
+    </PageShell>
   )
 }

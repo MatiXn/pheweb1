@@ -1,95 +1,96 @@
 import { Link } from 'react-router-dom'
 import { ForgotPasswordForm } from '../features/auth'
 
-const C = {
-  accent: '#3b72b8',
-  text: '#0f1623',
-  muted: '#4b5675',
-  faint: '#8b9ab1',
-  border: 'rgba(15,22,35,0.08)',
-  shadowLg: '0 20px 60px rgba(59,114,184,0.12)',
-}
-
-const F = "'Helvetica Neue', Helvetica, Arial, sans-serif"
+const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 
 export default function ForgotPasswordPage() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#f5f7fa',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: F,
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: 440 }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0f172a 100%)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24, fontFamily: F, position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Background decoration */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', top: '-20%', right: '-10%',
+          width: 480, height: 480, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-15%', left: '-10%',
+          width: 380, height: 380, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.11) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+        }} />
+      </div>
+
+      <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 1 }}>
+
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link
-            to="/"
-            style={{
-              fontFamily: F,
-              fontSize: 28,
-              fontWeight: 800,
-              color: C.text,
-              textDecoration: 'none',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            phe<em style={{ fontStyle: 'italic', color: C.accent }}>web</em>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <span style={{
+              fontSize: 28, fontWeight: 800, letterSpacing: '-0.04em',
+              color: '#f1f5f9', fontFamily: F,
+            }}>
+              phe<span style={{ color: '#60a5fa' }}>web</span>
+            </span>
           </Link>
-          <p style={{ marginTop: 8, fontSize: 15, color: C.muted }}>
+          <p style={{
+            marginTop: 6, fontSize: 12, color: 'rgba(148,163,184,0.7)',
+            fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
+          }}>
             Passwort zurücksetzen
           </p>
         </div>
 
         {/* Card */}
-        <div
-          style={{
-            background: '#fff',
-            borderRadius: 20,
-            padding: 36,
-            boxShadow: C.shadowLg,
-            border: `1px solid ${C.border}`,
-          }}
-        >
-          <h1
-            style={{
-              fontSize: 22,
-              fontWeight: 800,
-              color: C.text,
-              marginBottom: 8,
-              letterSpacing: '-0.01em',
-            }}
-          >
+        <div style={{
+          background: '#ffffff', borderRadius: 24,
+          padding: '40px 36px',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15)',
+          border: '1px solid rgba(255,255,255,0.9)',
+        }}>
+          <h1 style={{
+            fontSize: 24, fontWeight: 800, color: '#0f172a',
+            marginBottom: 8, letterSpacing: '-0.03em', lineHeight: 1.2,
+          }}>
             Passwort vergessen?
           </h1>
-          <p
-            style={{
-              fontSize: 14,
-              color: C.muted,
-              marginBottom: 24,
-              lineHeight: 1.6,
-            }}
-          >
-            Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link zum Zurücksetzen Ihres
-            Passworts.
+          <p style={{
+            fontSize: 14, color: '#475569',
+            marginBottom: 28, lineHeight: 1.6,
+          }}>
+            Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link
+            zum Zurücksetzen Ihres Passworts.
           </p>
 
           <ForgotPasswordForm />
 
-          <p style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: C.faint }}>
-            <Link
-              to="/login"
-              style={{ color: C.accent, fontWeight: 600, textDecoration: 'none' }}
-            >
-              ← Zurück zum Login
+          <div style={{
+            marginTop: 24, paddingTop: 20,
+            borderTop: '1px solid #f1f5f9',
+            textAlign: 'center', fontSize: 13,
+          }}>
+            <Link to="/login" style={{
+              color: '#2563eb', fontWeight: 600,
+              display: 'inline-flex', alignItems: 'center', gap: 4,
+            }}>
+              <span style={{ fontSize: 14 }}>←</span> Zurück zum Login
             </Link>
-          </p>
+          </div>
         </div>
+
+        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 12, color: 'rgba(148,163,184,0.4)' }}>
+          © {new Date().getFullYear()} pheweb — Fachkräfte-Plattform
+        </p>
       </div>
     </div>
   )
