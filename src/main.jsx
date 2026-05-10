@@ -27,6 +27,10 @@ import AdminMonitoringPage from "./pages/AdminMonitoringPage";
 import UnternehmenMatchDashboardPage from "./pages/UnternehmenMatchDashboardPage";
 import UnternehmenAbonnementPage from "./pages/UnternehmenAbonnementPage";
 import RecruiterInteressentenPage from "./pages/RecruiterInteressentenPage";
+import RecruiterProfilPage from "./pages/RecruiterProfilPage";
+import RecruiterKandidatHochladenPage from "./pages/RecruiterKandidatHochladenPage";
+import RecruiterKandidatenPage from "./pages/RecruiterKandidatenPage";
+import KandidatDatenschutzPage from "./pages/KandidatDatenschutzPage";
 import { AuthProvider } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -65,6 +69,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="/kandidat/dokumente" element={<ProtectedRoute><KandidatDokumentePage /></ProtectedRoute>} />
           <Route path="/kandidat/einwilligung" element={<ProtectedRoute><KandidatEinwilligungPage /></ProtectedRoute>} />
           <Route path="/kandidat/profil" element={<ProtectedRoute><KandidatProfilBearbeitenPage /></ProtectedRoute>} />
+          <Route path="/kandidat/datenschutz" element={<ProtectedRoute><KandidatDatenschutzPage /></ProtectedRoute>} />
 
           {/* Unternehmen */}
           <Route path="/unternehmen/matches" element={<ProtectedRoute><UnternehmenMatchDashboardPage /></ProtectedRoute>} />
@@ -75,6 +80,9 @@ createRoot(document.getElementById("root")).render(
           <Route path="/unternehmen/abonnement" element={<ProtectedRoute><UnternehmenAbonnementPage /></ProtectedRoute>} />
 
           {/* Recruiter */}
+          <Route path="/recruiter/kandidaten" element={<ProtectedRoute><RecruiterKandidatenPage /></ProtectedRoute>} />
+          <Route path="/recruiter/kandidat-hochladen" element={<ProtectedRoute><RecruiterKandidatHochladenPage /></ProtectedRoute>} />
+          <Route path="/recruiter/profil" element={<ProtectedRoute><RecruiterProfilPage /></ProtectedRoute>} />
           <Route path="/recruiter/interessenten" element={<ProtectedRoute><RecruiterInteressentenPage /></ProtectedRoute>} />
 
           {/* Fallback */}
