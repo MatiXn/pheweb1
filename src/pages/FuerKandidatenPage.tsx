@@ -1,39 +1,47 @@
 // FuerKandidatenPage — Für Kandidaten
 // Route: /fuer-kandidaten
 
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
-const C = {
-  accent: '#7c3aed', accentBg: '#f5f3ff', accentBd: '#ddd6fe',
-  text: '#0f172a', muted: '#475569', border: '#e2e8f0',
-  white: '#ffffff', bg: '#f8fafc', navy: '#0f172a',
+
+const Styles = () => (
+  <style>{`
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeIn   { from{opacity:0;}to{opacity:1;} }
+    @keyframes floatB   { 0%,100%{transform:translate(0,0);}50%{transform:translate(-22px,-18px);} }
+    @keyframes gradientMove { 0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;} }
+    .kb-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important; }
+    .kb-card:hover { transform: translateY(-5px) !important; box-shadow: 0 24px 56px rgba(15,23,42,0.12), 0 4px 16px rgba(124,58,237,0.12) !important; border-color: #ddd6fe !important; }
+    .kb-btn { transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease !important; }
+    .kb-btn:hover { transform: translateY(-2px) !important; filter: brightness(1.1) !important; box-shadow: 0 8px 24px rgba(124,58,237,0.5) !important; }
+  `}</style>
+)
+
+function useScrolled(t = 20) {
+  const [s, setS] = useState(false)
+  useEffect(() => { const fn = () => setS(window.scrollY > t); window.addEventListener('scroll', fn, { passive: true }); return () => window.removeEventListener('scroll', fn) }, [t])
+  return s
+}
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null); const [inView, setInView] = useState(false)
+  useEffect(() => { const el = ref.current; if (!el) return; const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold }); obs.observe(el); return () => obs.disconnect() }, [threshold])
+  return { ref, inView }
 }
 
 function Nav() {
+  const scrolled = useScrolled()
   return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: 'rgba(255,255,255,0.95)', borderBottom: `1px solid ${C.border}`,
-      backdropFilter: 'blur(12px)',
-    }}>
-      <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent', backdropFilter: scrolled ? 'blur(16px)' : 'none', borderBottom: scrolled ? '1px solid #e2e8f0' : 'none', transition: 'all 0.4s ease' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link to="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: F, color: C.navy }}>
-            phe<span style={{ color: '#2563eb' }}>web</span>
-          </span>
+          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em', fontFamily: F, color: scrolled ? '#0f172a' : '#f1f5f9' }}>phe<span style={{ color: '#60a5fa' }}>web</span></span>
         </Link>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link to="/login" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: C.muted, textDecoration: 'none', padding: '8px 16px' }}>
-            Anmelden
-          </Link>
-          <Link to="/registrieren/kandidat" style={{
-            fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, textDecoration: 'none',
-            padding: '9px 20px', borderRadius: 10,
-            background: `linear-gradient(135deg, ${C.accent} 0%, #8b5cf6 100%)`,
-            boxShadow: `0 2px 8px ${C.accent}40`,
-          }}>
-            Jetzt bewerben
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Link to="/login" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>Anmelden</Link>
+          <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '9px 22px', borderRadius: 10, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 2px 12px rgba(124,58,237,0.4)' }}>
+            Profil erstellen →
           </Link>
         </div>
       </div>
@@ -42,118 +50,155 @@ function Nav() {
 }
 
 export default function FuerKandidatenPage() {
+  const benefits = useInView(); const steps = useInView(); const faq = useInView()
+
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: F }}>
-      <Nav />
+    <>
+      <Styles />
+      <div style={{ minHeight: '100vh', fontFamily: F, overflowX: 'hidden' }}>
+        <Nav />
 
-      {/* Hero */}
-      <section style={{
-        background: `linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)`,
-        textAlign: 'center', padding: '128px 24px 80px', position: 'relative', overflow: 'hidden',
-      }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%)' }} />
-        </div>
-        <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(167,139,250,0.3)', borderRadius: 99, padding: '6px 16px', marginBottom: 28 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#c4b5fd', fontFamily: F }}>Für Kandidaten</span>
+        {/* Hero */}
+        <section style={{ background: 'linear-gradient(155deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)', padding: '140px 28px 100px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '-15%', right: '-8%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%)', animation: 'floatB 16s ease-in-out infinite' }} />
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px)`, backgroundSize: '52px 52px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 100%)' }} />
           </div>
-          <h1 style={{ fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.04em', color: '#f1f5f9', fontFamily: F, margin: '0 0 20px' }}>
-            Ihre nächste Stelle —<br />
-            <span style={{ background: 'linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              diskret und ohne Stress
-            </span>
-          </h1>
-          <p style={{ fontSize: 17, color: '#94a3b8', fontFamily: F, maxWidth: 560, margin: '0 auto 40px', lineHeight: 1.7 }}>
-            Erstellen Sie einmalig Ihr Profil. Erfahrene Recruiter stellen Sie passenden Unternehmen vor — anonym, professionell und ohne aktive Jobsuche.
-          </p>
-          <Link to="/registrieren/kandidat" style={{
-            fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, textDecoration: 'none',
-            padding: '14px 32px', borderRadius: 12,
-            background: `linear-gradient(135deg, ${C.accent} 0%, #8b5cf6 100%)`,
-            boxShadow: `0 4px 16px ${C.accent}60`,
-          }}>
-            Kostenlos Profil erstellen
-          </Link>
-        </div>
-      </section>
 
-      {/* Benefits */}
-      <section style={{ padding: '80px 24px', background: C.white }}>
-        <div style={{ maxWidth: 1140, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, color: C.text, letterSpacing: '-0.03em', fontFamily: F, textAlign: 'center', margin: '0 0 48px' }}>
-            Warum pheweb für Kandidaten?
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-            {[
-              { icon: '🆓', title: '100 % kostenlos', desc: 'Die Registrierung und alle Dienste für Kandidaten sind und bleiben kostenlos. Sie zahlen nichts.' },
-              { icon: '🔒', title: 'Anonymität bis zur Einwilligung', desc: 'Ihre persönlichen Daten werden erst freigegeben, wenn Sie einer konkreten Vorstellung zustimmen.' },
-              { icon: '🤝', title: 'Professionelle Recruiter', desc: 'Erfahrene externe Recruiter betreuen Sie aktiv und stellen Sie optimal bei passenden Unternehmen vor.' },
-              { icon: '📍', title: 'Passende Region', desc: 'Nur Unternehmen aus Ihrer gewünschten Region sehen Ihr Profil — keine unnötigen Anfragen.' },
-              { icon: '⏰', title: 'Ihr Tempo', desc: 'Setzen Sie Ihre Verfügbarkeit: sofort, in 1 Monat, oder flexibel. Sie behalten die Kontrolle.' },
-              { icon: '📊', title: 'Transparente Matches', desc: 'Sie sehen, wie gut Ihre Qualifikationen zu offenen Stellen passen — mit aufgeschlüsselten Scores.' },
-            ].map((b, i) => (
-              <div key={i} style={{ background: C.bg, borderRadius: 14, border: `1px solid ${C.border}`, padding: '24px 22px' }}>
-                <div style={{ fontSize: 28, marginBottom: 12 }}>{b.icon}</div>
-                <h4 style={{ fontSize: 16, fontWeight: 700, color: C.text, fontFamily: F, margin: '0 0 8px' }}>{b.title}</h4>
-                <p style={{ fontSize: 14, color: C.muted, fontFamily: F, margin: 0, lineHeight: 1.6 }}>{b.desc}</p>
-              </div>
-            ))}
+          <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(167,139,250,0.3)', borderRadius: 99, padding: '6px 16px', marginBottom: 32, animation: 'fadeIn 0.6s ease forwards' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#c4b5fd' }} />
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#c4b5fd', fontFamily: F }}>Für Kandidaten — 100 % kostenlos</span>
+            </div>
+
+            <h1 style={{ fontSize: 'clamp(38px, 5.5vw, 68px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.045em', color: '#f1f5f9', fontFamily: F, margin: '0 0 10px', animation: 'fadeInUp 0.7s ease 0.15s both' }}>Ihre nächste Stelle</h1>
+            <h1 style={{ fontSize: 'clamp(38px, 5.5vw, 68px)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.045em', fontFamily: F, margin: '0 0 28px', background: 'linear-gradient(135deg, #c4b5fd 0%, #a78bfa 50%, #818cf8 100%)', backgroundSize: '200% 200%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', animation: 'fadeInUp 0.7s ease 0.2s both, gradientMove 5s ease infinite' }}>
+              findet Sie.
+            </h1>
+
+            <p style={{ fontSize: 18, color: '#94a3b8', fontFamily: F, maxWidth: 580, margin: '0 0 48px', lineHeight: 1.75, animation: 'fadeInUp 0.7s ease 0.3s both' }}>
+              Erstellen Sie einmalig Ihr Profil. Erfahrene Recruiter stellen Sie passenden Unternehmen vor — <strong style={{ color: '#cbd5e1', fontWeight: 600 }}>anonym, kostenlos und ohne aktive Jobsuche.</strong>
+            </p>
+
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', animation: 'fadeInUp 0.7s ease 0.4s both' }}>
+              <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 15, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '14px 28px', borderRadius: 12, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 4px 20px rgba(124,58,237,0.5)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                Kostenloses Profil erstellen →
+              </Link>
+            </div>
+
+            <div style={{ display: 'flex', gap: 24, marginTop: 48, animation: 'fadeIn 0.8s ease 0.6s both' }}>
+              {['✓ Kostenlos für immer', '✓ Anonym bis zur Einwilligung', '✓ Sie behalten die Kontrolle'].map(t => (
+                <span key={t} style={{ fontSize: 13, color: '#475569', fontFamily: F, fontWeight: 500 }}>{t}</span>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Ablauf */}
-      <section style={{ padding: '80px 24px', background: C.bg }}>
-        <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, color: C.text, letterSpacing: '-0.03em', fontFamily: F, margin: '0 0 12px' }}>
-            So läuft es ab
-          </h2>
-          <p style={{ fontSize: 16, color: C.muted, fontFamily: F, margin: '0 0 48px' }}>In 4 einfachen Schritten zu Ihrer neuen Stelle.</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {[
-              { n: '01', title: 'Profil erstellen', desc: 'Titel, Skills, Erfahrung, Standort, Verfügbarkeit und Gehaltsvorstellung eintragen.' },
-              { n: '02', title: 'Recruiter prüft', desc: 'Ein Recruiter nimmt Ihr Profil in seine Pipeline auf und bereitet Ihre Vorstellung vor.' },
-              { n: '03', title: 'Anonymes Matching', desc: 'Ihr Profil wird anonymisiert passenden Unternehmen präsentiert. Kein Name, keine Kontaktdaten.' },
-              { n: '04', title: 'Einwilligung & Gespräch', desc: 'Wenn ein Unternehmen Interesse hat und Sie zustimmen, werden Kontaktdaten freigegeben.' },
-            ].map((s, i) => (
-              <div key={i} style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, padding: '20px 24px', display: 'flex', gap: 20, alignItems: 'flex-start', textAlign: 'left' }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: C.accent, background: C.accentBg, border: `1px solid ${C.accentBd}`, borderRadius: 8, padding: '4px 10px', fontFamily: 'monospace', flexShrink: 0, marginTop: 2 }}>
-                  {s.n}
-                </span>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: F, marginBottom: 4 }}>{s.title}</div>
-                  <div style={{ fontSize: 14, color: C.muted, fontFamily: F, lineHeight: 1.5 }}>{s.desc}</div>
+        {/* Benefits */}
+        <section style={{ background: '#ffffff', padding: '100px 28px' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div ref={benefits.ref} style={{ textAlign: 'center', marginBottom: 64, opacity: benefits.inView ? 1 : 0, transform: benefits.inView ? 'none' : 'translateY(30px)', transition: 'all 0.6s ease' }}>
+              <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.035em', fontFamily: F, margin: '0 0 14px' }}>
+                Warum Kandidaten pheweb wählen
+              </h2>
+              <p style={{ fontSize: 16, color: '#64748b', fontFamily: F, maxWidth: 480, margin: '0 auto' }}>
+                Kein Bewerbungsstress. Keine Überraschungen. Nur relevante Chancen.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 20 }}>
+              {[
+                { icon: '🆓', title: '100 % kostenlos', desc: 'Für Kandidaten ist pheweb kostenlos — ohne Tricks, ohne versteckte Gebühren, ohne Abo. Immer.' },
+                { icon: '🔒', title: 'Anonym bis Sie zustimmen', desc: 'Kein Arbeitgeber sieht Ihren Namen oder Ihre Kontaktdaten, bevor Sie explizit einwilligen. Datenschutz als Grundprinzip.' },
+                { icon: '🤝', title: 'Professionelle Recruiter', desc: 'Erfahrene externe Recruiter betreuen Sie aktiv und präsentieren Sie optimal — kein Cold-Call-Spam, echte Beziehungen.' },
+                { icon: '⏰', title: 'Ihr Tempo, Ihre Kontrolle', desc: 'Sofort, in einem Monat, oder flexibel — Sie geben die Verfügbarkeit vor. Sie können jederzeit pausieren.' },
+                { icon: '📍', title: 'Nur passende Regionen', desc: 'Nur Unternehmen in Ihrer Wunschregion sehen Ihr Profil. Keine bundesweiten Anfragen, wenn Sie lokal suchen.' },
+                { icon: '📊', title: 'Sehen Sie Ihre Matches', desc: 'Transparenz auf beiden Seiten: Sie sehen, wie gut Ihr Profil zu offenen Stellen passt — mit aufgeschlüsselten Scores.' },
+              ].map((b, i) => (
+                <div key={b.title} className="kb-card" style={{ background: '#f8fafc', borderRadius: 16, border: '1px solid #e2e8f0', padding: '26px 22px', opacity: benefits.inView ? 1 : 0, transform: benefits.inView ? 'none' : 'translateY(24px)', transition: 'opacity 0.5s ease, transform 0.5s ease', transitionDelay: `${i * 0.07}s` }}>
+                  <div style={{ fontSize: 28, marginBottom: 14 }}>{b.icon}</div>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', fontFamily: F, margin: '0 0 8px' }}>{b.title}</h4>
+                  <p style={{ fontSize: 14, color: '#64748b', fontFamily: F, margin: 0, lineHeight: 1.65 }}>{b.desc}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section style={{ padding: '60px 24px', background: C.white, textAlign: 'center' }}>
-        <h2 style={{ fontSize: 28, fontWeight: 800, color: C.text, fontFamily: F, margin: '0 0 12px' }}>
-          Jetzt Profil erstellen — kostenlos
-        </h2>
-        <p style={{ fontSize: 15, color: C.muted, fontFamily: F, margin: '0 0 28px' }}>
-          In wenigen Minuten registriert. Kein Risiko, keine Kosten.
-        </p>
-        <Link to="/registrieren/kandidat" style={{
-          fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, textDecoration: 'none',
-          padding: '14px 32px', borderRadius: 12,
-          background: `linear-gradient(135deg, ${C.accent} 0%, #8b5cf6 100%)`,
-          boxShadow: `0 4px 16px ${C.accent}50`,
-        }}>
-          Kostenlos registrieren
-        </Link>
-      </section>
+        {/* Steps */}
+        <section style={{ background: '#f8fafc', padding: '100px 28px' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+            <div ref={steps.ref} style={{ textAlign: 'center', marginBottom: 64, opacity: steps.inView ? 1 : 0, transform: steps.inView ? 'none' : 'translateY(30px)', transition: 'all 0.6s ease' }}>
+              <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.035em', fontFamily: F, margin: '0 0 14px' }}>
+                In 4 Schritten zur neuen Stelle
+              </h2>
+              <p style={{ fontSize: 16, color: '#64748b', fontFamily: F }}>Einmal einrichten, dauerhaft profitieren.</p>
+            </div>
 
-      <footer style={{ background: C.navy, padding: '24px', textAlign: 'center' }}>
-        <Link to="/" style={{ fontSize: 13, color: '#475569', fontFamily: F, textDecoration: 'none' }}>
-          ← Zurück zur Startseite
-        </Link>
-      </footer>
-    </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                { n: '01', icon: '✏️', title: 'Profil erstellen', desc: 'Berufsbezeichnung, Skills, Erfahrung, Wunschstandort, Verfügbarkeit und Gehaltsvorstellung eintragen. Geht in 5 Minuten.' },
+                { n: '02', icon: '🔍', title: 'Recruiter nimmt Sie auf', desc: 'Ein erfahrener Recruiter prüft Ihr Profil, nimmt Sie in seine Pipeline auf und bereitet Ihre Vorstellung aktiv vor.' },
+                { n: '03', icon: '🛡️', title: 'Anonymes Matching', desc: 'Ihr Profil wird anonymisiert passenden Unternehmen präsentiert — ohne Namen, ohne Foto, ohne Kontaktdaten.' },
+                { n: '04', icon: '✅', title: 'Einwilligung & Vorstellungsgespräch', desc: 'Wenn ein Unternehmen Interesse bekundet und Sie zustimmen, werden Ihre Kontaktdaten freigegeben. Sie haben das letzte Wort.' },
+              ].map((s, i) => (
+                <div key={s.n} style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e2e8f0', padding: '22px 26px', display: 'flex', gap: 20, alignItems: 'flex-start', opacity: steps.inView ? 1 : 0, transform: steps.inView ? 'none' : 'translateY(20px)', transition: 'all 0.5s ease', transitionDelay: `${i * 0.1}s` }}>
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0, boxShadow: '0 4px 12px rgba(124,58,237,0.3)' }}>{s.icon}</div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: '#7c3aed', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 6, padding: '3px 8px', fontFamily: 'monospace' }}>{s.n}</span>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', fontFamily: F }}>{s.title}</span>
+                    </div>
+                    <p style={{ fontSize: 14, color: '#64748b', fontFamily: F, margin: 0, lineHeight: 1.65 }}>{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section style={{ background: '#ffffff', padding: '100px 28px' }}>
+          <div style={{ maxWidth: 760, margin: '0 auto' }}>
+            <div ref={faq.ref} style={{ textAlign: 'center', marginBottom: 56, opacity: faq.inView ? 1 : 0, transform: faq.inView ? 'none' : 'translateY(30px)', transition: 'all 0.6s ease' }}>
+              <h2 style={{ fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.03em', fontFamily: F, margin: '0 0 14px' }}>Häufige Fragen</h2>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { q: 'Ist pheweb wirklich kostenlos?', a: 'Ja, vollständig. Für Kandidaten entstehen keine Kosten — weder jetzt noch in Zukunft. Die Plattform finanziert sich durch Recruiter-Provisionen bei erfolgreichen Einstellungen.' },
+                { q: 'Wer sieht mein Profil?', a: 'Nur zugelassene externe Recruiter und — nach Ihrem expliziten OK — die jeweiligen Unternehmen. Bis zu Ihrer Einwilligung sind alle persönlichen Daten vollständig anonym.' },
+                { q: 'Kann ich jederzeit aufhören?', a: 'Natürlich. Sie können Ihren Status jederzeit auf "nicht verfügbar" setzen oder Ihr Profil löschen. Kein Vertrag, keine Frist.' },
+                { q: 'Welche Branchen sind abgedeckt?', a: 'pheweb spezialisiert sich auf Elektrotechnik, TGA, SHK und Mechatronik — also genau die technischen Fachbereiche, in denen der Fachkräftemangel am größten ist.' },
+              ].map((item, i) => (
+                <div key={i} style={{ background: '#f8fafc', borderRadius: 14, border: '1px solid #e2e8f0', padding: '20px 22px', opacity: faq.inView ? 1 : 0, transform: faq.inView ? 'none' : 'translateY(16px)', transition: 'all 0.4s ease', transitionDelay: `${i * 0.08}s` }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontFamily: F, marginBottom: 8 }}>{item.q}</div>
+                  <div style={{ fontSize: 14, color: '#64748b', fontFamily: F, lineHeight: 1.65 }}>{item.a}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%)', padding: '100px 28px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '-30%', right: '-10%', width: 360, height: 360, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+          </div>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.035em', fontFamily: F, margin: '0 0 16px' }}>
+              Ihre nächste Stelle wartet.
+            </h2>
+            <p style={{ fontSize: 16, color: 'rgba(196,181,253,0.85)', fontFamily: F, margin: '0 0 44px' }}>Profil erstellen dauert 5 Minuten. Kostenlos. Ohne Risiko.</p>
+            <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: '#7c3aed', textDecoration: 'none', padding: '16px 36px', borderRadius: 14, background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              Jetzt kostenlos registrieren →
+            </Link>
+          </div>
+        </section>
+
+        <footer style={{ background: '#08091a', padding: '28px', textAlign: 'center' }}>
+          <Link to="/" style={{ fontSize: 13, color: '#334155', fontFamily: F, textDecoration: 'none' }}>← Zurück zur Startseite</Link>
+        </footer>
+      </div>
+    </>
   )
 }
