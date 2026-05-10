@@ -30,9 +30,13 @@ const LABEL: React.CSSProperties = {
   color: '#475569', marginBottom: 6,
 }
 
+const COOLDOWN_KEY = 'kandidat_anfrage_last'
+const COOLDOWN_MS  = 60 * 60 * 1000 // 1 Stunde
+
 export default function KandidatAnfragePage() {
   const [form, setForm] = useState({
     name: '', email: '', telefon: '', branche: '', erfahrung: '',
+    _trap: '', // Honeypot — bleibt immer leer für echte Nutzer
   })
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
@@ -43,20 +47,32 @@ export default function KandidatAnfragePage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Honeypot: Bot hat Falle ausgefüllt → still ignorieren
+    if (form._trap) { setDone(true); return }
+
+    // Rate-Limit: max. 1 Anfrage pro Stunde (localStorage)
+    const last = Number(localStorage.getItem(COOLDOWN_KEY) ?? 0)
+    if (Date.now() - last < COOLDOWN_MS) {
+      setError('Sie haben bereits eine Anfrage gesendet. Bitte warten Sie eine Stunde.')
+      return
+    }
+
     setLoading(true)
     setError('')
     const { error: err } = await supabase
       .from('kandidat_anfragen')
       .insert({
-        name: form.name,
-        email: form.email,
-        telefon: form.telefon,
-        branche: form.branche,
-        erfahrung: form.erfahrung || null,
+        name:      form.name.trim(),
+        email:     form.email.trim().toLowerCase(),
+        telefon:   form.telefon.trim(),
+        branche:   form.branche,
+        erfahrung: form.erfahrung.trim() || null,
       })
     if (err) {
       setError('Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.')
     } else {
+      localStorage.setItem(COOLDOWN_KEY, String(Date.now()))
       setDone(true)
     }
     setLoading(false)
@@ -121,6 +137,10 @@ export default function KandidatAnfragePage() {
               {/* Card */}
               <div style={{ background: '#ffffff', borderRadius: 20, padding: '36px 36px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <form onSubmit={submit}>
+                  {/* Honeypot — für Bots unsichtbar, für Menschen leer */}
+                  <div style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }} aria-hidden="true">
+                    <input tabIndex={-1} autoComplete="off" value={form._trap} onChange={set('_trap')} />
+                  </div>
 
                   {/* Name */}
                   <div style={{ marginBottom: 18 }}>

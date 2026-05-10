@@ -71,13 +71,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/warten" replace />
   }
 
-  // Admin: AAL2 (TOTP) erforderlich — nur weiterleiten wenn NICHT bereits verifiziert
-  // TODO: TOTP re-aktivieren nach Tests (aktuell für E2E-Test deaktiviert)
-  // if (profile.role === 'admin') {
-  //   if (adminAal !== 'aal2' && pathname !== '/admin/totp-verify' && pathname !== '/admin/totp-einrichten') {
-  //     return <Navigate to="/admin/totp-verify" replace />
-  //   }
-  // }
+  // Admin: AAL2 (TOTP) erforderlich
+  if (profile.role === 'admin') {
+    if (adminAal !== 'aal2' && pathname !== '/admin/totp-verify' && pathname !== '/admin/totp-einrichten') {
+      return <Navigate to="/admin/totp-verify" replace />
+    }
+  }
 
   // Kandidat: Onboarding abgeschlossen aber DSGVO-Einwilligung noch nicht erteilt
   // → Redirect zur Consent-Seite (außer auf AC3-exempt Routen: Dokumente, Onboarding)
