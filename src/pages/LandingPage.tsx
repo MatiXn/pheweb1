@@ -41,8 +41,12 @@ const Styles = () => (
       50%       { box-shadow: 0 0 0 6px rgba(37,99,235,0); }
     }
     @keyframes cardFloat {
-      0%, 100% { transform: rotate(3deg) translateY(0px); }
-      50%      { transform: rotate(3deg) translateY(-12px); }
+      0%, 100% { transform: translateY(0px); }
+      50%      { transform: translateY(-14px); }
+    }
+    @keyframes cardEnterUp {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)   scale(1);    }
     }
     @keyframes lineGrow {
       from { transform: scaleX(0); }
@@ -233,99 +237,310 @@ function Nav() {
   )
 }
 
-// ── Hero ───────────────────────────────────────────────────────────────────────
+// ── Hero Card Carousel ──────────────────────────────────────────────────────────
 
-function MockCard() {
+type KandidatData = {
+  type: 'kandidat'
+  anonymousId: string
+  title: string
+  score: number
+  scoreLabel: string
+  scoreColor: string
+  location: string
+  experience: string
+  education: string
+  availability: string
+  skills: string[]
+  bars: { label: string; pct: number }[]
+}
+
+type JobData = {
+  type: 'job'
+  badge: string
+  badgeBg: string
+  badgeColor: string
+  title: string
+  company: string
+  location: string
+  salary: string
+  experienceReq: string
+  skills: string[]
+}
+
+type HeroCardData = KandidatData | JobData
+
+const HERO_CARDS: HeroCardData[] = [
+  {
+    type: 'kandidat',
+    anonymousId: 'KA-A3F2B891',
+    title: 'Elektrotechniker / SPS',
+    score: 94,
+    scoreLabel: 'TOP',
+    scoreColor: '#10b981',
+    location: 'München',
+    experience: '7 Jahre',
+    education: 'Ausbildung',
+    availability: 'Sofort',
+    skills: ['SPS Siemens S7', 'Schaltpläne', 'TIA Portal'],
+    bars: [
+      { label: 'Skills',  pct: 94 },
+      { label: 'Region',  pct: 100 },
+      { label: 'Gehalt',  pct: 88 },
+    ],
+  },
+  {
+    type: 'job',
+    badge: 'Neue Stelle',
+    badgeBg: '#eff6ff',
+    badgeColor: '#2563eb',
+    title: 'Heizungsmonteur (m/w/d)',
+    company: 'Haustechnik-Betrieb · Bayern',
+    location: 'Augsburg',
+    salary: '48.000 – 58.000 €',
+    experienceReq: '3 – 7 Jahre',
+    skills: ['Heizungsinstallation', 'Wärmepumpen', 'Gas-Wasser'],
+  },
+  {
+    type: 'kandidat',
+    anonymousId: 'KA-C8D4E201',
+    title: 'TGA-Planerin Gebäudetechnik',
+    score: 87,
+    scoreLabel: 'GUT',
+    scoreColor: '#0ea5e9',
+    location: 'Frankfurt',
+    experience: '5 Jahre',
+    education: 'Studium (B.Eng)',
+    availability: '1 Monat',
+    skills: ['BIM/AutoCAD', 'Gebäudeautomation', 'MSR-Technik'],
+    bars: [
+      { label: 'Skills',  pct: 89 },
+      { label: 'Region',  pct: 74 },
+      { label: 'Gehalt',  pct: 95 },
+    ],
+  },
+  {
+    type: 'job',
+    badge: 'Express',
+    badgeBg: '#fff7ed',
+    badgeColor: '#c2410c',
+    title: 'Mechatroniker CNC (m/w/d)',
+    company: 'Maschinenbau GmbH · NRW',
+    location: 'Bielefeld',
+    salary: '52.000 – 68.000 €',
+    experienceReq: 'Ab 5 Jahre',
+    skills: ['CNC-Programmierung', 'Hydraulik', 'Roboterprogrammierung'],
+  },
+]
+
+function KandidatCard({ card }: { card: KandidatData }) {
+  const deg = Math.round((card.score / 100) * 360)
   return (
     <div style={{
-      background: '#ffffff', borderRadius: 18,
-      padding: '20px',
-      boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(37,99,235,0.2)',
+      background: '#ffffff', borderRadius: 18, padding: '18px 20px',
+      boxShadow: '0 32px 80px rgba(0,0,0,0.45), 0 8px 24px rgba(16,185,129,0.15)',
       border: '1px solid rgba(226,232,240,0.9)',
       width: 300, fontFamily: F,
-      animation: 'cardFloat 5s ease-in-out infinite',
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 13 }}>
         <div>
-          <div style={{ display: 'flex', gap: 5, marginBottom: 8 }}>
-            <span style={{ fontSize: 10, fontWeight: 700, background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '3px 9px', borderRadius: 99, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', gap: 5, marginBottom: 7 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '3px 8px', borderRadius: 99, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981' }} />
-              Top Match
-            </span>
-            <span style={{ fontSize: 10, fontWeight: 600, background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: 99 }}>
-              ✦ Neu
+              Kandidat-Profil
             </span>
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Senior Elektroingenieur</div>
+          <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 3 }}>{card.anonymousId}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>{card.title}</div>
         </div>
-        {/* Mini gauge */}
-        <div style={{ textAlign: 'center' }}>
+        {/* Score gauge */}
+        <div style={{ textAlign: 'center', flexShrink: 0 }}>
           <div style={{
-            width: 48, height: 48, borderRadius: '50%',
-            background: 'conic-gradient(from -90deg, #10b981 313deg, #e2e8f0 0deg)',
+            width: 46, height: 46, borderRadius: '50%',
+            background: `conic-gradient(from -90deg, ${card.scoreColor} ${deg}deg, #e2e8f0 0deg)`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 12, fontWeight: 800, color: '#10b981' }}>87</span>
+            <div style={{ width: 33, height: 33, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: 12, fontWeight: 800, color: card.scoreColor }}>{card.score}</span>
             </div>
           </div>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#10b981', background: '#ecfdf5', borderRadius: 4, padding: '1px 5px' }}>STARK</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: card.scoreColor, display: 'block', marginTop: 2 }}>{card.scoreLabel}</span>
         </div>
       </div>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: '#f1f5f9', marginBottom: 12 }} />
+      <div style={{ height: 1, background: '#f1f5f9', marginBottom: 11 }} />
 
       {/* Info grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 10px', marginBottom: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7px 10px', marginBottom: 11 }}>
         {[
-          { label: 'Standort', value: 'München' },
-          { label: 'Erfahrung', value: '8 Jahre' },
-          { label: 'Bildung', value: 'Studium' },
-          { label: 'Verfügbar', value: 'Sofort' },
+          { label: 'Standort',  value: card.location },
+          { label: 'Erfahrung', value: card.experience },
+          { label: 'Bildung',   value: card.education },
+          { label: 'Verfügbar', value: card.availability },
         ].map(i => (
           <div key={i.label}>
             <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{i.label}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>{i.value}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#0f172a' }}>{i.value}</div>
           </div>
         ))}
       </div>
 
       {/* Score bars */}
-      <div style={{ background: '#f8fafc', borderRadius: 8, padding: '10px 12px', marginBottom: 12 }}>
-        {[
-          { label: 'Skills', pct: 92 },
-          { label: 'Region', pct: 100 },
-          { label: 'Gehalt', pct: 78 },
-        ].map(b => (
-          <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
-            <span style={{ fontSize: 10, color: '#94a3b8', width: 46, flexShrink: 0 }}>{b.label}</span>
+      <div style={{ background: '#f8fafc', borderRadius: 8, padding: '9px 11px', marginBottom: 11 }}>
+        {card.bars.map(b => (
+          <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 10, color: '#94a3b8', width: 42, flexShrink: 0 }}>{b.label}</span>
             <div style={{ flex: 1, height: 3, borderRadius: 99, background: '#e2e8f0', overflow: 'hidden' }}>
-              <div style={{ width: `${b.pct}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg, #10b98166, #10b981)' }} />
+              <div style={{ width: `${b.pct}%`, height: '100%', borderRadius: 99, background: `linear-gradient(90deg, ${card.scoreColor}55, ${card.scoreColor})` }} />
             </div>
-            <span style={{ fontSize: 10, fontWeight: 700, color: '#10b981', width: 26, textAlign: 'right' }}>{b.pct}%</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: card.scoreColor, width: 26, textAlign: 'right' }}>{b.pct}%</span>
           </div>
         ))}
       </div>
 
       {/* Skills */}
-      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 14 }}>
-        {['SPS', 'AutoCAD', 'IEC 61131'].map((s, i) => (
-          <span key={s} style={{ fontSize: 10, fontWeight: 500, background: i === 0 ? '#eff6ff' : '#f8fafc', color: i === 0 ? '#2563eb' : '#64748b', border: '1px solid #e2e8f0', borderRadius: 5, padding: '2px 7px' }}>{s}</span>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 13 }}>
+        {card.skills.map((s, i) => (
+          <span key={s} style={{ fontSize: 10, fontWeight: 500, background: i === 0 ? '#ecfdf5' : '#f8fafc', color: i === 0 ? '#059669' : '#64748b', border: `1px solid ${i === 0 ? '#a7f3d0' : '#e2e8f0'}`, borderRadius: 5, padding: '2px 7px' }}>{s}</span>
         ))}
-        <span style={{ fontSize: 10, color: '#94a3b8', alignSelf: 'center' }}>+4</span>
       </div>
 
-      {/* CTA */}
-      <button style={{
-        width: '100%', padding: '10px', borderRadius: 9, border: 'none',
-        background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-        color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-        fontFamily: F, boxShadow: '0 2px 8px rgba(37,99,235,0.35)',
-      }}>
-        Interesse bekunden
+      <button style={{ width: '100%', padding: '9px', borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, #059669, #10b981)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F }}>
+        Interesse bekunden →
       </button>
+    </div>
+  )
+}
+
+function JobCard({ card }: { card: JobData }) {
+  return (
+    <div style={{
+      background: '#ffffff', borderRadius: 18, padding: '18px 20px',
+      boxShadow: '0 32px 80px rgba(0,0,0,0.45), 0 8px 24px rgba(37,99,235,0.15)',
+      border: '1px solid rgba(226,232,240,0.9)',
+      width: 300, fontFamily: F,
+    }}>
+      {/* Header */}
+      <div style={{ marginBottom: 13 }}>
+        <div style={{ display: 'flex', gap: 5, marginBottom: 7, alignItems: 'center' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, background: card.badgeBg, color: card.badgeColor, border: `1px solid ${card.badgeColor}33`, padding: '3px 9px', borderRadius: 99 }}>
+            {card.badge}
+          </span>
+          <span style={{ fontSize: 10, fontWeight: 600, background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: 99 }}>
+            Stelle
+          </span>
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', lineHeight: 1.25, marginBottom: 4 }}>{card.title}</div>
+        <div style={{ fontSize: 11, color: '#64748b', fontWeight: 500 }}>{card.company}</div>
+      </div>
+
+      <div style={{ height: 1, background: '#f1f5f9', marginBottom: 11 }} />
+
+      {/* Salary prominent */}
+      <div style={{ background: 'linear-gradient(135deg, #eff6ff, #e0f2fe)', borderRadius: 10, padding: '10px 14px', marginBottom: 11, border: '1px solid #bfdbfe' }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>Jahresgehalt</div>
+        <div style={{ fontSize: 16, fontWeight: 800, color: '#1d4ed8', letterSpacing: '-0.02em' }}>{card.salary}</div>
+      </div>
+
+      {/* Info grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7px 10px', marginBottom: 11 }}>
+        {[
+          { label: 'Standort',    value: card.location },
+          { label: 'Erfahrung',  value: card.experienceReq },
+        ].map(i => (
+          <div key={i.label}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{i.label}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#0f172a' }}>{i.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Required skills */}
+      <div style={{ marginBottom: 13 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Gesuchte Skills</div>
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+          {card.skills.map((s, i) => (
+            <span key={s} style={{ fontSize: 10, fontWeight: 500, background: i < 2 ? '#eff6ff' : '#f8fafc', color: i < 2 ? '#2563eb' : '#64748b', border: `1px solid ${i < 2 ? '#bfdbfe' : '#e2e8f0'}`, borderRadius: 5, padding: '2px 7px' }}>{s}</span>
+          ))}
+        </div>
+      </div>
+
+      <button style={{ width: '100%', padding: '9px', borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, #2563eb, #4f46e5)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: F }}>
+        Passende Kandidaten ansehen →
+      </button>
+    </div>
+  )
+}
+
+function HeroCardCarousel() {
+  const [idx, setIdx] = useState(0)
+  const [exiting, setExiting] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const advance = useCallback(() => {
+    setExiting(true)
+    timerRef.current = setTimeout(() => {
+      setIdx(i => (i + 1) % HERO_CARDS.length)
+      setExiting(false)
+    }, 340)
+  }, [])
+
+  useEffect(() => {
+    const id = setInterval(advance, 4200)
+    return () => {
+      clearInterval(id)
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [advance])
+
+  const current = HERO_CARDS[idx]
+  const next    = HERO_CARDS[(idx + 1) % HERO_CARDS.length]
+
+  return (
+    <div style={{ position: 'relative', width: 300, animation: 'cardFloat 6s ease-in-out infinite' }}>
+
+      {/* Peek card behind */}
+      <div style={{
+        position: 'absolute', top: 14, left: 12,
+        width: '100%', borderRadius: 18, overflow: 'hidden',
+        opacity: 0.28, transform: 'scale(0.95) rotate(2.5deg)',
+        zIndex: 0, pointerEvents: 'none',
+        filter: 'blur(1px)',
+      }}>
+        {next.type === 'kandidat'
+          ? <KandidatCard card={next} />
+          : <JobCard card={next} />}
+      </div>
+
+      {/* Active card */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        transition: 'opacity 0.34s ease, transform 0.34s ease',
+        opacity: exiting ? 0 : 1,
+        transform: exiting ? 'translateY(-12px) scale(0.96)' : 'translateY(0) scale(1)',
+      }}>
+        {current.type === 'kandidat'
+          ? <KandidatCard card={current} />
+          : <JobCard card={current} />}
+      </div>
+
+      {/* Dot indicators */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+        {HERO_CARDS.map((c, i) => (
+          <button
+            key={i}
+            onClick={() => { setExiting(true); setTimeout(() => { setIdx(i); setExiting(false) }, 340) }}
+            style={{
+              width: i === idx ? 20 : 6, height: 6, borderRadius: 99, border: 'none', cursor: 'pointer',
+              background: i === idx
+                ? (current.type === 'kandidat' ? '#10b981' : '#2563eb')
+                : 'rgba(255,255,255,0.25)',
+              transition: 'width 0.3s ease, background 0.3s ease',
+              padding: 0,
+            }}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -485,13 +700,13 @@ function Hero() {
             </div>
           </div>
 
-          {/* Right: floating mockup */}
+          {/* Right: rotating card carousel */}
           <div style={{
             flexShrink: 0,
             animation: 'fadeIn 1s ease forwards',
             animationDelay: '0.6s', opacity: 0,
           }}>
-            <MockCard />
+            <HeroCardCarousel />
           </div>
         </div>
       </div>
