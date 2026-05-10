@@ -1,4 +1,16 @@
+import type { ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+
+// ── Icon helpers (no emojis) ─────────────────────────────────────────────────
+const IcoLightning = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+const IcoShield    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+const IcoChart     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg>
+const IcoLock      = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+const IcoTarget    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+const IcoEuro      = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 9.5A6 6 0 1 0 17 14.5"/><path d="M5 12h8M5 10h8"/></svg>
+const IcoPercent   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+const IcoDatabase  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+const IcoTrending  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
 import { LoginForm } from '../features/auth/components/LoginForm'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
@@ -22,7 +34,7 @@ const THEMES: Record<Role, {
   headline: string
   headlineGradient: string
   sub: string
-  features: { icon: string; title: string; desc: string }[]
+  features: { icon: ReactNode; title: string; desc: string }[]
   registerTo: string
   registerLabel: string
 }> = {
@@ -43,9 +55,9 @@ const THEMES: Record<Role, {
     headlineGradient:'Fachkräfte zu finden.',
     sub:             'Verbinden Sie sich mit vorqualifizierten Kandidaten über unsere datenschutzkonforme Matching-Plattform.',
     features: [
-      { icon: '⚡', title: 'KI-Matching in Echtzeit',     desc: 'Passgenaue Kandidaten-Empfehlungen — vollautomatisch, sofort einsatzbereit.' },
-      { icon: '🛡️', title: 'DSGVO-konform',               desc: 'Vollständig anonymisierte Profile bis zur beidseitigen Zustimmung.' },
-      { icon: '📊', title: 'Transparente Match-Scores',   desc: 'Score-basierte Rangfolge für schnellere, bessere Einstellungsentscheidungen.' },
+      { icon: <IcoLightning />, title: 'KI-Matching in Echtzeit',     desc: 'Passgenaue Kandidaten-Empfehlungen — vollautomatisch, sofort einsatzbereit.' },
+      { icon: <IcoShield />,    title: 'DSGVO-konform',               desc: 'Vollständig anonymisierte Profile bis zur beidseitigen Zustimmung.' },
+      { icon: <IcoChart />,     title: 'Transparente Match-Scores',   desc: 'Score-basierte Rangfolge für schnellere, bessere Einstellungsentscheidungen.' },
     ],
     registerTo:    '/registrieren/unternehmen',
     registerLabel: 'Noch kein Konto? Als Unternehmen registrieren →',
@@ -67,9 +79,9 @@ const THEMES: Record<Role, {
     headlineGradient:'findet Sie.',
     sub:             'Einmalig Profil anlegen. Unsere Recruiter präsentieren Sie passenden Arbeitgebern — anonym, ohne aktive Bewerbung.',
     features: [
-      { icon: '🔒', title: 'Anonym bis zur Zustimmung',   desc: 'Ihr Name und Unternehmen bleiben verborgen, bis Sie Interesse bekunden.' },
-      { icon: '🎯', title: 'Passende Angebote',            desc: 'Nur Stellen, die wirklich zu Ihrer Qualifikation und Ihren Wünschen passen.' },
-      { icon: '💰', title: 'Kostenlos für Kandidaten',     desc: 'Keine Gebühren, keine Abos — jetzt und immer.' },
+      { icon: <IcoLock />,   title: 'Anonym bis zur Zustimmung',   desc: 'Ihr Name und Unternehmen bleiben verborgen, bis Sie Interesse bekunden.' },
+      { icon: <IcoTarget />, title: 'Passende Angebote',            desc: 'Nur Stellen, die wirklich zu Ihrer Qualifikation und Ihren Wünschen passen.' },
+      { icon: <IcoEuro />,   title: 'Kostenlos für Kandidaten',     desc: 'Keine Gebühren, keine Abos — jetzt und immer.' },
     ],
     registerTo:    '/registrieren/kandidat',
     registerLabel: 'Noch kein Profil? Jetzt kostenlos registrieren →',
@@ -91,9 +103,9 @@ const THEMES: Record<Role, {
     headlineGradient:'Weniger Festkosten.',
     sub:             'Greifen Sie auf einen frischen Kandidatenpool zu. Präsentieren Sie Ihre Kandidaten direkt bei Unternehmen — auf Erfolgsbasis.',
     features: [
-      { icon: '🤝', title: '~32,5 % Provision',            desc: 'Bei einem 50k-Gehalt: rund 16.250 € je erfolgreicher Einstellung.' },
-      { icon: '🗃️', title: 'Kandidaten-Datenbank',         desc: 'Zugang zu vorqualifizierten Fachkräften aus Elektro, TGA, SHK, Mechatronik.' },
-      { icon: '📈', title: 'Skalierbar',                    desc: 'Mehrere Unternehmen gleichzeitig bedienen — ohne Deckelung Ihrer Provision.' },
+      { icon: <IcoPercent />,  title: '~32,5 % Provision',            desc: 'Bei einem 50k-Gehalt: rund 16.250 € je erfolgreicher Einstellung.' },
+      { icon: <IcoDatabase />, title: 'Kandidaten-Datenbank',         desc: 'Zugang zu vorqualifizierten Fachkräften aus Elektro, TGA, SHK, Mechatronik.' },
+      { icon: <IcoTrending />, title: 'Skalierbar',                    desc: 'Mehrere Unternehmen gleichzeitig bedienen — ohne Deckelung Ihrer Provision.' },
     ],
     registerTo:    '/registrieren/recruiter',
     registerLabel: 'Noch kein Account? Als Recruiter registrieren →',
@@ -115,9 +127,9 @@ const THEMES: Record<Role, {
     headlineGradient:'Fachkräfte zu finden.',
     sub:             'Verbinden Sie sich mit vorqualifizierten Kandidaten über unsere datenschutzkonforme Matching-Plattform.',
     features: [
-      { icon: '⚡', title: 'KI-Matching in Echtzeit',     desc: 'Passgenaue Kandidaten-Empfehlungen — vollautomatisch, sofort einsatzbereit.' },
-      { icon: '🛡️', title: 'DSGVO-konform',               desc: 'Vollständig anonymisierte Profile bis zur beidseitigen Zustimmung.' },
-      { icon: '📊', title: 'Transparente Match-Scores',   desc: 'Score-basierte Rangfolge für schnellere, bessere Einstellungsentscheidungen.' },
+      { icon: <IcoLightning />, title: 'KI-Matching in Echtzeit',     desc: 'Passgenaue Kandidaten-Empfehlungen — vollautomatisch, sofort einsatzbereit.' },
+      { icon: <IcoShield />,    title: 'DSGVO-konform',               desc: 'Vollständig anonymisierte Profile bis zur beidseitigen Zustimmung.' },
+      { icon: <IcoChart />,     title: 'Transparente Match-Scores',   desc: 'Score-basierte Rangfolge für schnellere, bessere Einstellungsentscheidungen.' },
     ],
     registerTo:    '/registrieren/kandidat',
     registerLabel: 'Noch kein Konto? Jetzt registrieren →',

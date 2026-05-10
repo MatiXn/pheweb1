@@ -3,6 +3,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PublicNav from '../components/PublicNav'
+import {
+  IcoFree, IcoLock, IcoCheck, IcoCheckCircle, IcoPin, IcoChart,
+  IcoPhone, IcoSearch, IcoShield,
+} from '../components/icons'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 
@@ -19,33 +24,10 @@ const Styles = () => (
   `}</style>
 )
 
-function useScrolled(t = 20) {
-  const [s, setS] = useState(false)
-  useEffect(() => { const fn = () => setS(window.scrollY > t); window.addEventListener('scroll', fn, { passive: true }); return () => window.removeEventListener('scroll', fn) }, [t])
-  return s
-}
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null); const [inView, setInView] = useState(false)
   useEffect(() => { const el = ref.current; if (!el) return; const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold }); obs.observe(el); return () => obs.disconnect() }, [threshold])
   return { ref, inView }
-}
-
-function Nav() {
-  const scrolled = useScrolled()
-  return (
-    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent', backdropFilter: scrolled ? 'blur(16px)' : 'none', borderBottom: scrolled ? '1px solid #e2e8f0' : 'none', transition: 'all 0.4s ease' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em', fontFamily: F, color: scrolled ? '#0f172a' : '#f1f5f9' }}>phe<span style={{ color: '#60a5fa' }}>web</span></span>
-        </Link>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/kandidat/anfrage" className="kb-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '9px 22px', borderRadius: 10, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 2px 12px rgba(124,58,237,0.4)' }}>
-            Jetzt vermitteln lassen →
-          </Link>
-        </div>
-      </div>
-    </nav>
-  )
 }
 
 export default function FuerKandidatenPage() {
@@ -55,7 +37,7 @@ export default function FuerKandidatenPage() {
     <>
       <Styles />
       <div style={{ minHeight: '100vh', fontFamily: F, overflowX: 'hidden' }}>
-        <Nav />
+        <PublicNav />
 
         {/* Hero */}
         <section style={{ background: 'linear-gradient(155deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)', padding: '140px 28px 100px', position: 'relative', overflow: 'hidden' }}>
@@ -107,12 +89,12 @@ export default function FuerKandidatenPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 20 }}>
               {[
-                { icon: '🆓', title: '100 % kostenlos', desc: 'Für Kandidaten ist pheweb kostenlos — ohne Tricks, ohne versteckte Gebühren, ohne Abo. Immer.' },
-                { icon: '🔒', title: 'Anonym bis Sie zustimmen', desc: 'Kein Arbeitgeber sieht Ihren Namen oder Ihre Kontaktdaten, bevor Sie explizit einwilligen. Datenschutz als Grundprinzip.' },
-                { icon: '🤝', title: 'Professionelle Recruiter', desc: 'Erfahrene externe Recruiter betreuen Sie aktiv und präsentieren Sie optimal — kein Cold-Call-Spam, echte Beziehungen.' },
-                { icon: '⏰', title: 'Ihr Tempo, Ihre Kontrolle', desc: 'Sofort, in einem Monat, oder flexibel — Sie geben die Verfügbarkeit vor. Sie können jederzeit pausieren.' },
-                { icon: '📍', title: 'Nur passende Regionen', desc: 'Nur Unternehmen in Ihrer Wunschregion sehen Ihr Profil. Keine bundesweiten Anfragen, wenn Sie lokal suchen.' },
-                { icon: '📊', title: 'Sehen Sie Ihre Matches', desc: 'Transparenz auf beiden Seiten: Sie sehen, wie gut Ihr Profil zu offenen Stellen passt — mit aufgeschlüsselten Scores.' },
+                { icon: <IcoFree />,       title: '100 % kostenlos', desc: 'Für Kandidaten ist pheweb kostenlos — ohne Tricks, ohne versteckte Gebühren, ohne Abo. Immer.' },
+                { icon: <IcoLock />,       title: 'Anonym bis Sie zustimmen', desc: 'Kein Arbeitgeber sieht Ihren Namen oder Ihre Kontaktdaten, bevor Sie explizit einwilligen. Datenschutz als Grundprinzip.' },
+                { icon: <IcoCheck />,      title: 'Professionelle Recruiter', desc: 'Erfahrene externe Recruiter betreuen Sie aktiv und präsentieren Sie optimal — kein Cold-Call-Spam, echte Beziehungen.' },
+                { icon: <IcoCheckCircle />, title: 'Ihr Tempo, Ihre Kontrolle', desc: 'Sofort, in einem Monat, oder flexibel — Sie geben die Verfügbarkeit vor. Sie können jederzeit pausieren.' },
+                { icon: <IcoPin />,        title: 'Nur passende Regionen', desc: 'Nur Unternehmen in Ihrer Wunschregion sehen Ihr Profil. Keine bundesweiten Anfragen, wenn Sie lokal suchen.' },
+                { icon: <IcoChart />,      title: 'Sehen Sie Ihre Matches', desc: 'Transparenz auf beiden Seiten: Sie sehen, wie gut Ihr Profil zu offenen Stellen passt — mit aufgeschlüsselten Scores.' },
               ].map((b, i) => (
                 <div key={b.title} className="kb-card" style={{ background: '#f8fafc', borderRadius: 16, border: '1px solid #e2e8f0', padding: '26px 22px', opacity: benefits.inView ? 1 : 0, transform: benefits.inView ? 'none' : 'translateY(24px)', transition: 'opacity 0.5s ease, transform 0.5s ease', transitionDelay: `${i * 0.07}s` }}>
                   <div style={{ fontSize: 28, marginBottom: 14 }}>{b.icon}</div>
@@ -136,10 +118,10 @@ export default function FuerKandidatenPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
-                { n: '01', icon: '📞', title: 'Kurzes Kennenlerngespräch', desc: 'Anfrage absenden. Wir rufen Sie innerhalb von 24h an — ein 15–25 Min. Gespräch, um Sie und Ihre Wünsche kennenzulernen.' },
-                { n: '02', icon: '🔍', title: 'Recruiter nimmt Sie auf', desc: 'Ein erfahrener Recruiter prüft Ihr Profil, nimmt Sie in seine Pipeline auf und bereitet Ihre Vorstellung aktiv vor.' },
-                { n: '03', icon: '🛡️', title: 'Anonymes Matching', desc: 'Ihr Profil wird anonymisiert passenden Unternehmen präsentiert — ohne Namen, ohne Foto, ohne Kontaktdaten.' },
-                { n: '04', icon: '✅', title: 'Einwilligung & Vorstellungsgespräch', desc: 'Wenn ein Unternehmen Interesse bekundet und Sie zustimmen, werden Ihre Kontaktdaten freigegeben. Sie haben das letzte Wort.' },
+                { n: '01', icon: <IcoPhone />,       title: 'Kurzes Kennenlerngespräch', desc: 'Anfrage absenden. Wir rufen Sie innerhalb von 24h an — ein 15–25 Min. Gespräch, um Sie und Ihre Wünsche kennenzulernen.' },
+                { n: '02', icon: <IcoSearch />,      title: 'Recruiter nimmt Sie auf', desc: 'Ein erfahrener Recruiter prüft Ihr Profil, nimmt Sie in seine Pipeline auf und bereitet Ihre Vorstellung aktiv vor.' },
+                { n: '03', icon: <IcoShield />,      title: 'Anonymes Matching', desc: 'Ihr Profil wird anonymisiert passenden Unternehmen präsentiert — ohne Namen, ohne Foto, ohne Kontaktdaten.' },
+                { n: '04', icon: <IcoCheckCircle />, title: 'Einwilligung & Vorstellungsgespräch', desc: 'Wenn ein Unternehmen Interesse bekundet und Sie zustimmen, werden Ihre Kontaktdaten freigegeben. Sie haben das letzte Wort.' },
               ].map((s, i) => (
                 <div key={s.n} style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e2e8f0', padding: '22px 26px', display: 'flex', gap: 20, alignItems: 'flex-start', opacity: steps.inView ? 1 : 0, transform: steps.inView ? 'none' : 'translateY(20px)', transition: 'all 0.5s ease', transitionDelay: `${i * 0.1}s` }}>
                   <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0, boxShadow: '0 4px 12px rgba(124,58,237,0.3)' }}>{s.icon}</div>

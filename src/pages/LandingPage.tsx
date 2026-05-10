@@ -2,7 +2,14 @@
 // Route: /
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import PublicNav from '../components/PublicNav'
+import {
+  IcoShield, IcoLock, IcoFlag, IcoBuilding, IcoUser, IcoSearch,
+  IcoPen, IcoCheck, IcoLightning, IcoTarget, IcoChart, IcoStar,
+  IcoBell, IcoFactory, IcoEuro, IcoDroplet, IcoWrench,
+} from '../components/icons'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 
@@ -75,21 +82,6 @@ const Styles = () => (
       transform: translateY(-6px) !important;
       box-shadow: 0 32px 64px rgba(0,0,0,0.25), 0 8px 20px rgba(37,99,235,0.15) !important;
     }
-    .nav-link-hover {
-      transition: color 0.15s ease, background 0.15s ease !important;
-    }
-    .nav-link-hover:hover {
-      color: #2563eb !important;
-      background: rgba(37,99,235,0.08) !important;
-    }
-    .btn-primary-hover {
-      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
-    }
-    .btn-primary-hover:hover {
-      transform: translateY(-2px) !important;
-      filter: brightness(1.1) !important;
-      box-shadow: 0 8px 24px rgba(37,99,235,0.5) !important;
-    }
     .btn-ghost-hover {
       transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
     }
@@ -113,16 +105,6 @@ const Styles = () => (
 )
 
 // ── Hooks ──────────────────────────────────────────────────────────────────────
-
-function useScrolled(threshold = 20) {
-  const [scrolled, setScrolled] = useState(false)
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > threshold)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [threshold])
-  return scrolled
-}
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
@@ -154,87 +136,6 @@ function useCounter(target: number, duration = 1800, active = false) {
     requestAnimationFrame(tick)
   }, [target, duration, active])
   return val
-}
-
-// ── Navigation ─────────────────────────────────────────────────────────────────
-
-function Nav() {
-  const scrolled = useScrolled()
-
-  return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-      background: scrolled ? 'rgba(8,12,26,0.88)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
-      transition: 'background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease',
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: '0 auto', padding: '0 28px',
-        height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{
-            fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em',
-            fontFamily: F, color: '#f1f5f9',
-          }}>
-            phe<span style={{ color: '#60a5fa' }}>web</span>
-          </span>
-        </Link>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {[
-            { to: '/fuer-unternehmen', label: 'Für Unternehmen' },
-            { to: '/fuer-kandidaten',  label: 'Für Kandidaten'  },
-            { to: '/fuer-recruiter',   label: 'Für Recruiter'   },
-          ].map(l => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="nav-link-hover"
-              style={{
-                fontFamily: F, fontSize: 14, fontWeight: 500,
-                color: 'rgba(203,213,225,0.85)',
-                textDecoration: 'none',
-                padding: '8px 14px', borderRadius: 8,
-              }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Link
-            to="/login"
-            className="nav-link-hover"
-            style={{
-              fontFamily: F, fontSize: 14, fontWeight: 600,
-              color: 'rgba(148,163,184,0.8)',
-              textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
-            }}
-          >
-            Anmelden
-          </Link>
-          <Link
-            to="/registrieren/unternehmen"
-            className="btn-primary-hover"
-            style={{
-              fontFamily: F, fontSize: 14, fontWeight: 700,
-              color: '#fff', textDecoration: 'none',
-              padding: '9px 22px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
-              boxShadow: '0 2px 12px rgba(37,99,235,0.4)',
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-            }}
-          >
-            Kostenlos starten
-          </Link>
-        </div>
-      </div>
-    </nav>
-  )
 }
 
 // ── Hero Card Carousel ──────────────────────────────────────────────────────────
@@ -688,12 +589,12 @@ function Hero() {
               animationDelay: '0.7s', opacity: 0,
             }}>
               {[
-                { icon: '🛡️', text: 'DSGVO-konform' },
-                { icon: '🔒', text: 'Vollständig anonym' },
-                { icon: '🇩🇪', text: 'Made in Germany' },
+                { ico: <IcoShield />, text: 'DSGVO-konform' },
+                { ico: <IcoLock />,   text: 'Vollständig anonym' },
+                { ico: <IcoFlag />,   text: 'Made in Germany' },
               ].map(t => (
                 <div key={t.text} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <span style={{ fontSize: 14 }}>{t.icon}</span>
+                  <span style={{ fontSize: 14, color: '#475569', lineHeight: 1 }}>{t.ico}</span>
                   <span style={{ fontSize: 13, color: '#475569', fontFamily: F, fontWeight: 500 }}>{t.text}</span>
                 </div>
               ))}
@@ -768,7 +669,7 @@ function Stats() {
 function AudienceCard({
   delay, icon, title, tagline, color, colorBg, colorBd, bullets, primary, primaryTo, secondary, secondaryTo,
 }: {
-  delay: number; icon: string; title: string; tagline: string
+  delay: number; icon: ReactNode; title: string; tagline: string
   color: string; colorBg: string; colorBd: string; bullets: string[]
   primary: string; primaryTo: string; secondary: string; secondaryTo: string
 }) {
@@ -901,7 +802,7 @@ function AudienceSection() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
           <AudienceCard
             delay={0}
-            icon="🏢" title="Unternehmen" tagline="Matches, die wirklich passen."
+            icon={<IcoBuilding />} title="Unternehmen" tagline="Matches, die wirklich passen."
             color="#2563eb" colorBg="#eff6ff" colorBd="#bfdbfe"
             bullets={[
               'Score-basierte Kandidaten-Empfehlungen für jede Stelle',
@@ -914,7 +815,7 @@ function AudienceSection() {
           />
           <AudienceCard
             delay={0.1}
-            icon="👤" title="Kandidaten" tagline="Ihre nächste Stelle findet Sie."
+            icon={<IcoUser />} title="Kandidaten" tagline="Ihre nächste Stelle findet Sie."
             color="#7c3aed" colorBg="#f5f3ff" colorBd="#ddd6fe"
             bullets={[
               '100 % kostenlos — immer und für alle Kandidaten',
@@ -927,7 +828,7 @@ function AudienceSection() {
           />
           <AudienceCard
             delay={0.2}
-            icon="🔍" title="Recruiter" tagline="Skalieren Sie ohne Festkosten."
+            icon={<IcoSearch />} title="Recruiter" tagline="Skalieren Sie ohne Festkosten."
             color="#059669" colorBg="#ecfdf5" colorBd="#a7f3d0"
             bullets={[
               'Kandidaten hochladen und automatisch matchen lassen',
@@ -950,10 +851,10 @@ function HowItWorks() {
   const { ref, inView } = useInView(0.1)
 
   const steps = [
-    { n: '01', icon: '✏️', title: 'Profil anlegen', desc: 'Unternehmen erfassen offene Stellen, Kandidaten ihr Profil — Recruiter laden vorqualifizierte Talente hoch. In Minuten.' },
-    { n: '02', icon: '⚡', title: 'Automatisches Matching', desc: 'Unser Algorithmus berechnet Scores für Skills, Erfahrung, Standort, Verfügbarkeit und Gehalt — vollautomatisch.' },
-    { n: '03', icon: '🔒', title: 'Anonymes Browsing', desc: 'Unternehmen sehen Kandidaten-Karten ohne persönliche Daten. DSGVO-konform by design, kein Risiko.' },
-    { n: '04', icon: '🤝', title: 'Einwilligung & Kontakt', desc: 'Bei Interesse wird der Recruiter informiert, holt die Kandidaten-Einwilligung ein und koordiniert das erste Gespräch.' },
+    { n: '01', icon: <IcoPen />,       title: 'Profil anlegen', desc: 'Unternehmen erfassen offene Stellen, Kandidaten ihr Profil — Recruiter laden vorqualifizierte Talente hoch. In Minuten.' },
+    { n: '02', icon: <IcoLightning />, title: 'Automatisches Matching', desc: 'Unser Algorithmus berechnet Scores für Skills, Erfahrung, Standort, Verfügbarkeit und Gehalt — vollautomatisch.' },
+    { n: '03', icon: <IcoLock />,      title: 'Anonymes Browsing', desc: 'Unternehmen sehen Kandidaten-Karten ohne persönliche Daten. DSGVO-konform by design, kein Risiko.' },
+    { n: '04', icon: <IcoCheck />,     title: 'Einwilligung & Kontakt', desc: 'Bei Interesse wird der Recruiter informiert, holt die Kandidaten-Einwilligung ein und koordiniert das erste Gespräch.' },
   ]
 
   return (
@@ -1052,16 +953,16 @@ function HowItWorks() {
 function FeaturesSection() {
   const { ref, inView } = useInView(0.1)
 
-  const features = [
-    { icon: '🎯', title: 'Präzises KI-Matching', desc: 'Fünf-dimensionaler Algorithmus: Skills, Erfahrung, Region, Verfügbarkeit, Gehalt. Kein Raten — nur Daten.' },
-    { icon: '🛡️', title: 'DSGVO by Design', desc: 'Anonymisierung ist kein Feature — es ist die Architektur. Bis zur beidseitigen Zustimmung bleiben Kandidaten unsichtbar.' },
-    { icon: '📊', title: 'Transparente Scores', desc: 'Jede Empfehlung kommt mit aufgeschlüsseltem Match-Score. Volle Nachvollziehbarkeit statt Black Box.' },
-    { icon: '⚡', title: 'Echtzeit-Signale', desc: 'Interesse bekundet? Der Recruiter weiß es sofort. Kein Postfach-Chaos, kein Warten, keine vergessenen Kandidaten.' },
-    { icon: '🏭', title: 'Spezialisiert, nicht generisch', desc: 'Elektro, TGA, SHK, Mechatronik. Kein Monster-Jobboard mit Millionen Kandidaten — sondern Qualität statt Quantität.' },
-    { icon: '💶', title: 'Erfolgsbasierte Abrechnung', desc: 'Recruiter zahlen nichts bis zur Einstellung. Unternehmen investieren nur wenn es klappt. Win-win-win.' },
-    { icon: '⭐', title: 'Shortlist & Pipeline', desc: 'Kandidaten vormerken, filtern, Status tracken — alles in einem übersichtlichen Dashboard ohne Excel-Hölle.' },
-    { icon: '🔔', title: 'Smarte Benachrichtigungen', desc: 'Nur relevante Benachrichtigungen. Kein Spam. Sie werden informiert, wenn es zählt.' },
-    { icon: '🤝', title: 'Strukturierter Prozess', desc: 'Von der Einwilligung bis zum Hiring — alles dokumentiert, nachvollziehbar und revisionssicher auf der Plattform.' },
+  const features: { icon: ReactNode; title: string; desc: string }[] = [
+    { icon: <IcoTarget />,    title: 'Präzises KI-Matching', desc: 'Fünf-dimensionaler Algorithmus: Skills, Erfahrung, Region, Verfügbarkeit, Gehalt. Kein Raten — nur Daten.' },
+    { icon: <IcoShield />,    title: 'DSGVO by Design', desc: 'Anonymisierung ist kein Feature — es ist die Architektur. Bis zur beidseitigen Zustimmung bleiben Kandidaten unsichtbar.' },
+    { icon: <IcoChart />,     title: 'Transparente Scores', desc: 'Jede Empfehlung kommt mit aufgeschlüsseltem Match-Score. Volle Nachvollziehbarkeit statt Black Box.' },
+    { icon: <IcoLightning />, title: 'Echtzeit-Signale', desc: 'Interesse bekundet? Der Recruiter weiß es sofort. Kein Postfach-Chaos, kein Warten, keine vergessenen Kandidaten.' },
+    { icon: <IcoFactory />,   title: 'Spezialisiert, nicht generisch', desc: 'Elektro, TGA, SHK, Mechatronik. Kein Monster-Jobboard mit Millionen Kandidaten — sondern Qualität statt Quantität.' },
+    { icon: <IcoEuro />,      title: 'Erfolgsbasierte Abrechnung', desc: 'Recruiter zahlen nichts bis zur Einstellung. Unternehmen investieren nur wenn es klappt. Win-win-win.' },
+    { icon: <IcoStar />,      title: 'Shortlist & Pipeline', desc: 'Kandidaten vormerken, filtern, Status tracken — alles in einem übersichtlichen Dashboard ohne Excel-Hölle.' },
+    { icon: <IcoBell />,      title: 'Smarte Benachrichtigungen', desc: 'Nur relevante Benachrichtigungen. Kein Spam. Sie werden informiert, wenn es zählt.' },
+    { icon: <IcoCheck />,     title: 'Strukturierter Prozess', desc: 'Von der Einwilligung bis zum Hiring — alles dokumentiert, nachvollziehbar und revisionssicher auf der Plattform.' },
   ]
 
   return (
@@ -1150,12 +1051,12 @@ function BranchenBanner() {
           Spezialisiert auf technische Fachberufe
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-          {[
-            { icon: '⚡', label: 'Elektrotechnik', color: '#d97706', bg: '#fefce8', bd: '#fde68a' },
-            { icon: '🏗️', label: 'TGA', color: '#2563eb', bg: '#eff6ff', bd: '#bfdbfe' },
-            { icon: '💧', label: 'SHK', color: '#0891b2', bg: '#ecfeff', bd: '#a5f3fc' },
-            { icon: '🔧', label: 'Mechatronik', color: '#7c3aed', bg: '#f5f3ff', bd: '#ddd6fe' },
-          ].map((b, i) => (
+          {([
+            { icon: <IcoLightning />, label: 'Elektrotechnik', color: '#d97706', bg: '#fefce8', bd: '#fde68a' },
+            { icon: <IcoBuilding />,  label: 'TGA',            color: '#2563eb', bg: '#eff6ff', bd: '#bfdbfe' },
+            { icon: <IcoDroplet />,   label: 'SHK',            color: '#0891b2', bg: '#ecfeff', bd: '#a5f3fc' },
+            { icon: <IcoWrench />,    label: 'Mechatronik',    color: '#7c3aed', bg: '#f5f3ff', bd: '#ddd6fe' },
+          ] as { icon: ReactNode; label: string; color: string; bg: string; bd: string }[]).map((b, i) => (
             <div
               key={b.label}
               style={{
@@ -1352,7 +1253,7 @@ export default function LandingPage() {
     <>
       <Styles />
       <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
-        <Nav />
+        <PublicNav />
         <Hero />
         <Stats />
         <AudienceSection />

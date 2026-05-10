@@ -3,6 +3,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PublicNav from '../components/PublicNav'
+import {
+  IcoTarget, IcoLock, IcoChart, IcoStar, IcoMail, IcoCard,
+  IcoBuilding, IcoLightning, IcoEye, IcoCheck,
+  IcoWrench, IcoDroplet,
+} from '../components/icons'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 
@@ -19,16 +25,6 @@ const Styles = () => (
   `}</style>
 )
 
-function useScrolled(t = 20) {
-  const [s, setS] = useState(false)
-  useEffect(() => {
-    const fn = () => setS(window.scrollY > t)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [t])
-  return s
-}
-
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
@@ -40,40 +36,6 @@ function useInView(threshold = 0.15) {
   return { ref, inView }
 }
 
-function Nav() {
-  const scrolled = useScrolled()
-  return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-      background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(16px)' : 'none',
-      borderBottom: scrolled ? '1px solid #e2e8f0' : 'none',
-      transition: 'all 0.4s ease',
-    }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em', fontFamily: F, color: scrolled ? '#0f172a' : '#f1f5f9' }}>
-            phe<span style={{ color: '#60a5fa' }}>web</span>
-          </span>
-        </Link>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/login?from=unternehmen" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>
-            Anmelden
-          </Link>
-          <Link to="/registrieren/unternehmen" className="ub-btn" style={{
-            fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none',
-            padding: '9px 22px', borderRadius: 10,
-            background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
-            boxShadow: '0 2px 12px rgba(37,99,235,0.4)',
-          }}>
-            Jetzt starten →
-          </Link>
-        </div>
-      </div>
-    </nav>
-  )
-}
-
 export default function FuerUnternehmenPage() {
   const benefits = useInView()
   const branchen = useInView()
@@ -83,7 +45,7 @@ export default function FuerUnternehmenPage() {
     <>
       <Styles />
       <div style={{ minHeight: '100vh', fontFamily: F, overflowX: 'hidden' }}>
-        <Nav />
+        <PublicNav />
 
         {/* Hero */}
         <section style={{
@@ -163,12 +125,12 @@ export default function FuerUnternehmenPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 20 }}>
               {[
-                { icon: '🎯', title: 'Nur passende Kandidaten', desc: 'Unser 5-dimensionaler Algorithmus matcht Skills, Erfahrung, Standort, Verfügbarkeit und Gehalt. Sie sehen nur Kandidaten, die wirklich passen.' },
-                { icon: '🔒', title: 'Anonym bis zur Einwilligung', desc: 'Kein Name, kein Foto, keine Kontaktdaten — bis Sie Interesse bekunden und der Kandidat zustimmt. DSGVO pur.' },
-                { icon: '📊', title: 'Transparente Match-Scores', desc: 'Jede Karte zeigt den exakten Score mit Aufschlüsselung nach Dimension. Keine Bauchentscheidungen mehr, keine Black Box.' },
-                { icon: '⭐', title: 'Shortlist & Filter', desc: 'Kandidaten vormerken, nach Scores sortieren, nach Job filtern — alles in einer übersichtlichen Ansicht, ohne Excel.' },
-                { icon: '📬', title: 'Direkte Recruiter-Verbindung', desc: 'Wenn Sie Interesse signalisieren, kontaktiert der Recruiter Sie sofort. Kein Postfach-Ping-Pong, kein Warten.' },
-                { icon: '💳', title: 'Kein Upfront-Risiko', desc: 'Keine monatliche Gebühr. Sie investieren nur, wenn eine Einstellung tatsächlich zustande kommt. Win-win.' },
+                { icon: <IcoTarget />, title: 'Nur passende Kandidaten', desc: 'Unser 5-dimensionaler Algorithmus matcht Skills, Erfahrung, Standort, Verfügbarkeit und Gehalt. Sie sehen nur Kandidaten, die wirklich passen.' },
+                { icon: <IcoLock />,   title: 'Anonym bis zur Einwilligung', desc: 'Kein Name, kein Foto, keine Kontaktdaten — bis Sie Interesse bekunden und der Kandidat zustimmt. DSGVO pur.' },
+                { icon: <IcoChart />,  title: 'Transparente Match-Scores', desc: 'Jede Karte zeigt den exakten Score mit Aufschlüsselung nach Dimension. Keine Bauchentscheidungen mehr, keine Black Box.' },
+                { icon: <IcoStar />,   title: 'Shortlist & Filter', desc: 'Kandidaten vormerken, nach Scores sortieren, nach Job filtern — alles in einer übersichtlichen Ansicht, ohne Excel.' },
+                { icon: <IcoMail />,   title: 'Direkte Recruiter-Verbindung', desc: 'Wenn Sie Interesse signalisieren, kontaktiert der Recruiter Sie sofort. Kein Postfach-Ping-Pong, kein Warten.' },
+                { icon: <IcoCard />,   title: 'Kein Upfront-Risiko', desc: 'Keine monatliche Gebühr. Sie investieren nur, wenn eine Einstellung tatsächlich zustande kommt. Win-win.' },
               ].map((b, i) => (
                 <div
                   key={b.title}
@@ -205,10 +167,10 @@ export default function FuerUnternehmenPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 2 }}>
               {[
-                { n: '01', icon: '🏢', title: 'Stelle anlegen', desc: 'Beschreiben Sie Ihre offene Position: Berufsfeld, Skills, Standort, Erfahrung, Gehaltsrahmen.' },
-                { n: '02', icon: '⚡', title: 'Matching läuft', desc: 'pheweb matcht automatisch passende Kandidaten aus der gesamten Recruiter-Pipeline — Sie müssen nichts tun.' },
-                { n: '03', icon: '👁️', title: 'Kandidaten prüfen', desc: 'Sehen Sie anonymisierte Kandidaten-Karten mit aufgeschlüsselten Scores. Favorisieren Sie interessante Profile.' },
-                { n: '04', icon: '🤝', title: 'Interesse bekunden', desc: 'Ein Klick genügt. Der Recruiter kontaktiert Sie und koordiniert das erste Gespräch — ohne Mehraufwand für Sie.' },
+                { n: '01', icon: <IcoBuilding />,   title: 'Stelle anlegen', desc: 'Beschreiben Sie Ihre offene Position: Berufsfeld, Skills, Standort, Erfahrung, Gehaltsrahmen.' },
+                { n: '02', icon: <IcoLightning />,  title: 'Matching läuft', desc: 'pheweb matcht automatisch passende Kandidaten aus der gesamten Recruiter-Pipeline — Sie müssen nichts tun.' },
+                { n: '03', icon: <IcoEye />,        title: 'Kandidaten prüfen', desc: 'Sehen Sie anonymisierte Kandidaten-Karten mit aufgeschlüsselten Scores. Favorisieren Sie interessante Profile.' },
+                { n: '04', icon: <IcoCheck />,      title: 'Interesse bekunden', desc: 'Ein Klick genügt. Der Recruiter kontaktiert Sie und koordiniert das erste Gespräch — ohne Mehraufwand für Sie.' },
               ].map((s, i) => (
                 <div key={s.n} style={{
                   textAlign: 'center', padding: '0 16px',
@@ -240,10 +202,10 @@ export default function FuerUnternehmenPage() {
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
               {[
-                { icon: '⚡', label: 'Elektrotechnik', color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', bd: 'rgba(251,191,36,0.3)' },
-                { icon: '🏗️', label: 'TGA', color: '#60a5fa', bg: 'rgba(96,165,250,0.12)', bd: 'rgba(96,165,250,0.3)' },
-                { icon: '💧', label: 'SHK', color: '#22d3ee', bg: 'rgba(34,211,238,0.12)', bd: 'rgba(34,211,238,0.3)' },
-                { icon: '🔧', label: 'Mechatronik', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', bd: 'rgba(167,139,250,0.3)' },
+                { icon: <IcoLightning />, label: 'Elektrotechnik', color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', bd: 'rgba(251,191,36,0.3)' },
+                { icon: <IcoBuilding />, label: 'TGA', color: '#60a5fa', bg: 'rgba(96,165,250,0.12)', bd: 'rgba(96,165,250,0.3)' },
+                { icon: <IcoDroplet />,  label: 'SHK', color: '#22d3ee', bg: 'rgba(34,211,238,0.12)', bd: 'rgba(34,211,238,0.3)' },
+                { icon: <IcoWrench />,   label: 'Mechatronik', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', bd: 'rgba(167,139,250,0.3)' },
               ].map((b, i) => (
                 <div key={b.label} style={{
                   display: 'flex', alignItems: 'center', gap: 10, fontSize: 15, fontWeight: 600, color: b.color, fontFamily: F,
