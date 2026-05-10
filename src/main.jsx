@@ -2,6 +2,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
+import LandingPage from "./pages/LandingPage";
+import FuerUnternehmenPage from "./pages/FuerUnternehmenPage";
+import FuerKandidatenPage from "./pages/FuerKandidatenPage";
+import FuerRecruiterPage from "./pages/FuerRecruiterPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import CandidateRegisterPage from "./pages/CandidateRegisterPage";
@@ -39,11 +44,16 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Root: redirect to login or role-based dashboard */}
+          {/* Startseite & Marketing */}
           <Route path="/" element={<App />} />
+          <Route path="/start" element={<LandingPage />} />
+          <Route path="/fuer-unternehmen" element={<FuerUnternehmenPage />} />
+          <Route path="/fuer-kandidaten"  element={<FuerKandidatenPage />}  />
+          <Route path="/fuer-recruiter"   element={<FuerRecruiterPage />}   />
 
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin" element={<AdminLoginPage />} />
           <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
           <Route path="/passwort-zuruecksetzen" element={<ResetPasswordPage />} />
 
