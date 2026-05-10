@@ -36,6 +36,7 @@ import RecruiterProfilPage from "./pages/RecruiterProfilPage";
 import RecruiterKandidatHochladenPage from "./pages/RecruiterKandidatHochladenPage";
 import RecruiterKandidatenPage from "./pages/RecruiterKandidatenPage";
 import KandidatDatenschutzPage from "./pages/KandidatDatenschutzPage";
+import KandidatAnfragePage from "./pages/KandidatAnfragePage";
 import { AuthProvider } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PageTransition } from "./components/PageTransition";
@@ -76,7 +77,10 @@ createRoot(document.getElementById("root")).render(
           <Route path="/admin/unternehmen" element={<ProtectedRoute><AdminUnternehmenPage /></ProtectedRoute>} />
           <Route path="/admin/monitoring" element={<ProtectedRoute><AdminMonitoringPage /></ProtectedRoute>} />
 
-          {/* Kandidat */}
+          {/* Kandidat — öffentliche Anfrage (kein Login) */}
+          <Route path="/kandidat/anfrage" element={<KandidatAnfragePage />} />
+
+          {/* Kandidat — interne Seiten (Recruiter-verwaltete Profile) */}
           <Route path="/kandidat/onboarding" element={<ProtectedRoute><KandidatOnboardingPage /></ProtectedRoute>} />
           <Route path="/kandidat/dokumente" element={<ProtectedRoute><KandidatDokumentePage /></ProtectedRoute>} />
           <Route path="/kandidat/einwilligung" element={<ProtectedRoute><KandidatEinwilligungPage /></ProtectedRoute>} />

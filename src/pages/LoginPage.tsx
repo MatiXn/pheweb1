@@ -134,7 +134,7 @@ const STATS = [
 export default function LoginPage() {
   const [params] = useSearchParams()
   const raw = params.get('from') ?? 'default'
-  const role: Role = (['unternehmen', 'kandidat', 'recruiter'] as const).includes(raw as Role)
+  const role: Role = (['unternehmen', 'recruiter'] as const).includes(raw as Role)
     ? (raw as Role)
     : 'default'
   const T = THEMES[role]
@@ -345,16 +345,14 @@ export default function LoginPage() {
                 Als Unternehmen →
               </Link>
             )}
-            {role !== 'kandidat' && (
-              <Link to="/login?from=kandidat" style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'none' }}>
-                Als Kandidat →
-              </Link>
-            )}
             {role !== 'recruiter' && (
               <Link to="/login?from=recruiter" style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'none' }}>
                 Als Recruiter →
               </Link>
             )}
+            <Link to="/kandidat/anfrage" style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'none' }}>
+              Als Kandidat bewerben →
+            </Link>
           </div>
 
           {/* Footer note */}

@@ -451,7 +451,7 @@ function Hero() {
                 <span style={{ fontSize: 16 }}>→</span>
               </Link>
               <Link
-                to="/registrieren/kandidat"
+                to="/kandidat/anfrage"
                 className="btn-ghost-hover"
                 style={{
                   fontFamily: F, fontSize: 15, fontWeight: 600,
@@ -703,7 +703,7 @@ function AudienceSection() {
             color="#7c3aed" colorBg="#f5f3ff" colorBd="#ddd6fe"
             bullets={[
               '100 % kostenlos — immer und für alle Kandidaten',
-              'Profil anlegen und von Recruitern entdeckt werden',
+              'Kurzes Gespräch (15-25 Min.) — wir kümmern uns um den Rest',
               'Anonym bis Sie explizit zustimmen — keine Überraschungen',
               'Verfügbarkeit selbst bestimmen: sofort, in Monaten oder flexibel',
             ]}
@@ -1023,7 +1023,7 @@ function CTABanner() {
               Für Unternehmen starten
             </Link>
             <Link
-              to="/registrieren/kandidat"
+              to="/kandidat/anfrage"
               className="btn-ghost-hover"
               style={{
                 fontFamily: F, fontSize: 15, fontWeight: 600,
@@ -1033,7 +1033,7 @@ function CTABanner() {
                 background: 'rgba(255,255,255,0.1)',
               }}
             >
-              Kandidaten-Profil anlegen
+              Jetzt vermitteln lassen
             </Link>
           </div>
         </div>
@@ -1081,7 +1081,7 @@ function Footer() {
           <FooterCol title="Konto" links={[
             { label: 'Anmelden',              to: '/login'                    },
             { label: 'Unternehmen registrieren', to: '/registrieren/unternehmen' },
-            { label: 'Kandidat registrieren',   to: '/registrieren/kandidat'    },
+            { label: 'Kandidat bewerben',   to: '/kandidat/anfrage'    },
             { label: 'Recruiter registrieren',  to: '/registrieren/recruiter'   },
           ]} />
           <FooterCol title="Branchen" links={[

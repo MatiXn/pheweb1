@@ -39,9 +39,8 @@ function Nav() {
           <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.05em', fontFamily: F, color: scrolled ? '#0f172a' : '#f1f5f9' }}>phe<span style={{ color: '#60a5fa' }}>web</span></span>
         </Link>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/login?from=kandidat" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: scrolled ? '#64748b' : 'rgba(148,163,184,0.9)', textDecoration: 'none', padding: '8px 16px' }}>Anmelden</Link>
-          <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '9px 22px', borderRadius: 10, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 2px 12px rgba(124,58,237,0.4)' }}>
-            Profil erstellen →
+          <Link to="/kandidat/anfrage" className="kb-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '9px 22px', borderRadius: 10, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 2px 12px rgba(124,58,237,0.4)' }}>
+            Jetzt vermitteln lassen →
           </Link>
         </div>
       </div>
@@ -81,8 +80,8 @@ export default function FuerKandidatenPage() {
             </p>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', animation: 'fadeInUp 0.7s ease 0.4s both' }}>
-              <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 15, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '14px 28px', borderRadius: 12, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 4px 20px rgba(124,58,237,0.5)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                Kostenloses Profil erstellen →
+              <Link to="/kandidat/anfrage" className="kb-btn" style={{ fontFamily: F, fontSize: 15, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '14px 28px', borderRadius: 12, background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', boxShadow: '0 4px 20px rgba(124,58,237,0.5)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                Jetzt vermitteln lassen →
               </Link>
             </div>
 
@@ -137,7 +136,7 @@ export default function FuerKandidatenPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
-                { n: '01', icon: '✏️', title: 'Profil erstellen', desc: 'Berufsbezeichnung, Skills, Erfahrung, Wunschstandort, Verfügbarkeit und Gehaltsvorstellung eintragen. Geht in 5 Minuten.' },
+                { n: '01', icon: '📞', title: 'Kurzes Kennenlerngespräch', desc: 'Anfrage absenden. Wir rufen Sie innerhalb von 24h an — ein 15–25 Min. Gespräch, um Sie und Ihre Wünsche kennenzulernen.' },
                 { n: '02', icon: '🔍', title: 'Recruiter nimmt Sie auf', desc: 'Ein erfahrener Recruiter prüft Ihr Profil, nimmt Sie in seine Pipeline auf und bereitet Ihre Vorstellung aktiv vor.' },
                 { n: '03', icon: '🛡️', title: 'Anonymes Matching', desc: 'Ihr Profil wird anonymisiert passenden Unternehmen präsentiert — ohne Namen, ohne Foto, ohne Kontaktdaten.' },
                 { n: '04', icon: '✅', title: 'Einwilligung & Vorstellungsgespräch', desc: 'Wenn ein Unternehmen Interesse bekundet und Sie zustimmen, werden Ihre Kontaktdaten freigegeben. Sie haben das letzte Wort.' },
@@ -188,9 +187,9 @@ export default function FuerKandidatenPage() {
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.035em', fontFamily: F, margin: '0 0 16px' }}>
               Ihre nächste Stelle wartet.
             </h2>
-            <p style={{ fontSize: 16, color: 'rgba(196,181,253,0.85)', fontFamily: F, margin: '0 0 44px' }}>Profil erstellen dauert 5 Minuten. Kostenlos. Ohne Risiko.</p>
-            <Link to="/registrieren/kandidat" className="kb-btn" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: '#7c3aed', textDecoration: 'none', padding: '16px 36px', borderRadius: 14, background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              Jetzt kostenlos registrieren →
+            <p style={{ fontSize: 16, color: 'rgba(196,181,253,0.85)', fontFamily: F, margin: '0 0 44px' }}>Anfrage in 2 Minuten. Kein Account. Kein Risiko.</p>
+            <Link to="/kandidat/anfrage" className="kb-btn" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: '#7c3aed', textDecoration: 'none', padding: '16px 36px', borderRadius: 14, background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              Jetzt vermitteln lassen →
             </Link>
           </div>
         </section>
