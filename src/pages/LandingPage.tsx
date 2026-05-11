@@ -101,6 +101,32 @@ const Styles = () => (
       background: rgba(37,99,235,0.3);
       color: #f8fafc;
     }
+    input[type=range].cov-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.12); outline: none; cursor: pointer;
+    }
+    input[type=range].cov-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #2563eb; cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.6);
+      transition: transform 0.15s ease;
+    }
+    input[type=range].cov-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    input[type=range].cov-slider::-moz-range-thumb {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #2563eb; cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.6);
+    }
+    @keyframes covPop {
+      0%   { transform: scale(0.92); opacity: 0.5; }
+      60%  { transform: scale(1.04); opacity: 1; }
+      100% { transform: scale(1);    opacity: 1; }
+    }
+    .cov-result-pop { animation: covPop 0.35s ease forwards; }
   `}</style>
 )
 
@@ -948,6 +974,234 @@ function HowItWorks() {
   )
 }
 
+// ── Cost of Vacancy Calculator ─────────────────────────────────────────────────
+
+const FACTORS = [
+  { value: 1,   label: '1×',   desc: 'Tagessatz (direkte Lücke)'      },
+  { value: 1.5, label: '1,5×', desc: '+ Teambelastung'                },
+  { value: 2,   label: '2×',   desc: '+ Recruiting & Einarbeitung'    },
+  { value: 3,   label: '3×',   desc: '+ Opportunitätskosten'          },
+]
+
+function CostOfVacancy() {
+  const { ref, inView } = useInView(0.15)
+  const [salary, setSalary] = useState(55000)
+  const [days,   setDays]   = useState(30)
+  const [factor, setFactor] = useState(1)
+  const [popKey, setPopKey] = useState(0)
+
+  const cov      = Math.round((salary / 226) * days * factor)
+  const daily    = Math.round(salary / 226 * factor)
+  const severity = cov < 5000 ? '#10b981' : cov < 25000 ? '#f59e0b' : '#ef4444'
+  const sevBg    = cov < 5000 ? 'rgba(16,185,129,0.12)' : cov < 25000 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)'
+
+  // trigger pop animation on value change
+  const prevCov = useRef(cov)
+  useEffect(() => {
+    if (prevCov.current !== cov) { setPopKey(k => k + 1); prevCov.current = cov }
+  }, [cov])
+
+  const fmt = (n: number) => n.toLocaleString('de-DE')
+
+  return (
+    <section style={{
+      background: 'linear-gradient(160deg, #08091a 0%, #0c1225 60%, #080c1f 100%)',
+      padding: '100px 28px', position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Background glow */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '30%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(239,68,68,0.07) 0%, transparent 65%)', animation: 'floatA 18s ease-in-out infinite' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', right: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%)', animation: 'floatB 22s ease-in-out infinite' }} />
+      </div>
+
+      <div ref={ref} style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: 56, alignItems: 'center',
+          opacity: inView ? 1 : 0,
+          transform: inView ? 'translateY(0)' : 'translateY(40px)',
+          transition: 'opacity 0.7s ease, transform 0.7s ease',
+        }}>
+
+          {/* ── Left: Explanation ── */}
+          <div>
+            <span style={{
+              fontSize: 12, fontWeight: 700, color: '#f87171', fontFamily: F,
+              textTransform: 'uppercase', letterSpacing: '0.12em',
+              background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(248,113,113,0.25)',
+              borderRadius: 99, padding: '5px 14px', display: 'inline-block', marginBottom: 24,
+            }}>
+              Wirtschaftliche Realität
+            </span>
+            <h2 style={{
+              fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#f1f5f9',
+              letterSpacing: '-0.035em', fontFamily: F, margin: '0 0 20px', lineHeight: 1.15,
+            }}>
+              Was kostet eine<br />offene Stelle wirklich?
+            </h2>
+            <p style={{ fontSize: 16, color: '#94a3b8', fontFamily: F, lineHeight: 1.75, margin: '0 0 28px', maxWidth: 440 }}>
+              Jede unbesetzte Stelle verursacht stille Kosten — Produktivitätslücken, Teambelastung, entgangene Aufträge.
+              Der <strong style={{ color: '#e2e8f0' }}>Cost of Vacancy</strong> macht das sichtbar.
+            </p>
+
+            {/* Formula */}
+            <div style={{
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+              borderRadius: 14, padding: '18px 22px', marginBottom: 32, fontFamily: 'monospace',
+            }}>
+              <div style={{ fontSize: 11, color: '#475569', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+                Formel
+              </div>
+              <div style={{ fontSize: 15, color: '#94a3b8', lineHeight: 2 }}>
+                <span style={{ color: '#60a5fa' }}>(</span>
+                <span style={{ color: '#f1f5f9' }}>Jahresgehalt</span>
+                <span style={{ color: '#60a5fa' }}> ÷ 226</span>
+                <span style={{ color: '#94a3b8' }}>)</span>
+                <span style={{ color: '#60a5fa' }}> × </span>
+                <span style={{ color: '#f1f5f9' }}>Vakanz-Tage</span>
+                <span style={{ color: '#60a5fa' }}> × </span>
+                <span style={{ color: '#f1f5f9' }}>Kostenfaktor</span>
+              </div>
+              <div style={{ fontSize: 12, color: '#334155', marginTop: 8 }}>
+                226 = Arbeitstage/Jahr in Deutschland (Ø)
+              </div>
+            </div>
+
+            <a
+              href="/fuer-unternehmen"
+              className="btn-primary-hover"
+              style={{
+                display: 'inline-block', fontFamily: F, fontSize: 15, fontWeight: 700,
+                color: '#fff', textDecoration: 'none',
+                padding: '14px 28px', borderRadius: 12,
+                background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                boxShadow: '0 4px 20px rgba(37,99,235,0.45)',
+              }}
+            >
+              Jetzt schneller besetzen
+            </a>
+          </div>
+
+          {/* ── Right: Calculator ── */}
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 24, padding: '36px 32px',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.3)',
+          }}>
+            {/* Result display */}
+            <div style={{
+              background: sevBg, border: `1px solid ${severity}33`,
+              borderRadius: 18, padding: '28px 24px', textAlign: 'center',
+              marginBottom: 32, transition: 'background 0.4s ease, border-color 0.4s ease',
+            }}>
+              <div style={{ fontSize: 13, color: '#64748b', fontFamily: F, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>
+                Cost of Vacancy
+              </div>
+              <div
+                key={popKey}
+                className="cov-result-pop"
+                style={{ fontSize: 'clamp(42px, 6vw, 64px)', fontWeight: 900, fontFamily: F, color: severity, letterSpacing: '-0.04em', lineHeight: 1 }}
+              >
+                {fmt(cov)} €
+              </div>
+              <div style={{ fontSize: 14, color: '#64748b', fontFamily: F, marginTop: 10 }}>
+                bei <strong style={{ color: '#e2e8f0' }}>{days} Tagen</strong> Vakanz · <strong style={{ color: '#e2e8f0' }}>{fmt(daily)} €/Tag</strong>
+              </div>
+            </div>
+
+            {/* Sliders */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+              {/* Jahresgehalt */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', fontFamily: F }}>Jahresgehalt</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', fontFamily: F }}>{fmt(salary)} €</span>
+                </div>
+                <input
+                  type="range" className="cov-slider"
+                  min={25000} max={120000} step={1000}
+                  value={salary}
+                  onChange={e => setSalary(Number(e.target.value))}
+                  style={{ '--slider-pct': `${(salary - 25000) / (120000 - 25000) * 100}%` } as React.CSSProperties}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+                  <span style={{ fontSize: 11, color: '#475569', fontFamily: F }}>25.000 €</span>
+                  <span style={{ fontSize: 11, color: '#475569', fontFamily: F }}>120.000 €</span>
+                </div>
+              </div>
+
+              {/* Vakanz-Tage */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', fontFamily: F }}>Vakanz-Dauer</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', fontFamily: F }}>{days} {days === 1 ? 'Tag' : 'Tage'}</span>
+                </div>
+                <input
+                  type="range" className="cov-slider"
+                  min={1} max={180} step={1}
+                  value={days}
+                  onChange={e => setDays(Number(e.target.value))}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+                  <span style={{ fontSize: 11, color: '#475569', fontFamily: F }}>1 Tag</span>
+                  <span style={{ fontSize: 11, color: '#475569', fontFamily: F }}>180 Tage</span>
+                </div>
+              </div>
+
+              {/* Kostenfaktor */}
+              <div>
+                <div style={{ marginBottom: 12 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', fontFamily: F }}>Kostenfaktor</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                  {FACTORS.map(f => (
+                    <button
+                      key={f.value}
+                      onClick={() => setFactor(f.value)}
+                      style={{
+                        fontFamily: F, fontSize: 13, fontWeight: 700,
+                        border: `1.5px solid ${factor === f.value ? '#2563eb' : 'rgba(255,255,255,0.1)'}`,
+                        borderRadius: 10, padding: '10px 6px', cursor: 'pointer',
+                        background: factor === f.value ? 'rgba(37,99,235,0.2)' : 'rgba(255,255,255,0.03)',
+                        color: factor === f.value ? '#60a5fa' : '#64748b',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ fontSize: 12, color: '#475569', fontFamily: F, marginTop: 10, minHeight: 18 }}>
+                  {FACTORS.find(f => f.value === factor)?.desc}
+                </div>
+              </div>
+            </div>
+
+            {/* Insight text */}
+            <div style={{
+              marginTop: 28, padding: '16px 18px',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 12, fontSize: 13, color: '#64748b', fontFamily: F, lineHeight: 1.7,
+            }}>
+              <span style={{ color: '#94a3b8' }}>
+                Die offene Stelle verursacht in nur{' '}
+                <strong style={{ color: '#e2e8f0' }}>{days} {days === 1 ? 'Tag' : 'Tagen'}</strong>{' '}
+                bereits wirtschaftliche Auswirkungen von rund{' '}
+                <strong style={{ color: severity }}>{fmt(cov)} €</strong>.
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ── Features (dark) ────────────────────────────────────────────────────────────
 
 function FeaturesSection() {
@@ -1258,6 +1512,7 @@ export default function LandingPage() {
         <Stats />
         <AudienceSection />
         <HowItWorks />
+        <CostOfVacancy />
         <FeaturesSection />
         <BranchenBanner />
         <CTABanner />
