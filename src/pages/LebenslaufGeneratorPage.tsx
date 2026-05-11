@@ -13,7 +13,7 @@ const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 type Experience = { id: string; position: string; firma: string; ort: string; von: string; bis: string; taetigkeiten: string }
 type Education  = { id: string; abschluss: string; institution: string; ort: string; von: string; bis: string; hinweis: string }
 type Language   = { id: string; sprache: string; niveau: string }
-type Template   = 'A' | 'B'
+type Template   = 'A' | 'B' | 'C'
 
 type CVData = {
   vorname: string; nachname: string; berufsbezeichnung: string
@@ -793,6 +793,182 @@ function TemplateB({ cv }: { cv: CVData }) {
   )
 }
 
+// ── Template C: Blauer Header + Datum-Spalte ─────────────────────────────────
+
+function TemplateC({ cv }: { cv: CVData }) {
+  const name   = `${cv.vorname} ${cv.nachname}`.trim() || 'Ihr Name'
+  const addr   = [cv.strasse, [cv.plz, cv.stadt].filter(Boolean).join(' ')].filter(Boolean).join(', ')
+  const hasExp = cv.erfahrungen.some(e => e.position || e.firma)
+  const hasEdu = cv.ausbildungen.some(e => e.abschluss || e.institution)
+
+  const contacts = [
+    cv.email    && { icon: 'mail',  text: cv.email    },
+    cv.telefon  && { icon: 'phone', text: cv.telefon  },
+    addr        && { icon: 'loc',   text: addr        },
+    cv.linkedin && { icon: 'in',    text: cv.linkedin },
+  ].filter(Boolean) as { icon: string; text: string }[]
+
+  const BlueSection = ({ title }: { title: string }) => (
+    <div style={{ marginTop: 18, marginBottom: 8 }}>
+      <div style={{ fontSize: 11.5, fontWeight: 800, color: '#1e40af', fontFamily: F, marginBottom: 5 }}>
+        {title}
+      </div>
+      <div style={{ height: 1.5, background: '#1e40af' }} />
+    </div>
+  )
+
+  const IconC = ({ type }: { type: string }) => {
+    const s = { width: 11, height: 11, flexShrink: 0 as const }
+    if (type === 'mail')  return <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+    if (type === 'phone') return <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.38h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.09l1.96-1.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    if (type === 'loc')   return <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7.05 11.5 7.35 11.76a1 1 0 0 0 1.3 0C13 21.5 20 15.4 20 10a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+    return <span style={{ fontSize: 9, fontWeight: 900, fontFamily: 'serif', lineHeight: 1 }}>in</span>
+  }
+
+  return (
+    <div style={{ fontFamily: F, fontSize: 12, color: '#0f172a', background: '#fff' }}>
+
+      {/* ── Blue Header ── */}
+      <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)', padding: '24px 28px', display: 'flex', gap: 20, alignItems: 'center' }}>
+        {cv.foto ? (
+          <img src={cv.foto} alt="Foto"
+            style={{ width: 88, height: 88, objectFit: 'cover', borderRadius: 6, flexShrink: 0, border: '2px solid rgba(255,255,255,0.25)' }} />
+        ) : (
+          <div style={{ width: 88, height: 88, background: 'rgba(255,255,255,0.15)', borderRadius: 6, flexShrink: 0, border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+        )}
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 24, fontWeight: 900, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 4 }}>
+            {name}
+          </div>
+          {cv.berufsbezeichnung && (
+            <div style={{ fontSize: 9.5, fontWeight: 700, color: 'rgba(186,230,253,0.9)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 9 }}>
+              {cv.berufsbezeichnung}
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {contacts.map((c, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 10.5, color: 'rgba(255,255,255,0.9)' }}>
+                <IconC type={c.icon} />
+                <span>{c.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Body ── */}
+      <div style={{ padding: '12px 28px 24px' }}>
+
+        {cv.profil && (
+          <>
+            <BlueSection title="Profil" />
+            <p style={{ margin: '0 0 4px', lineHeight: 1.7, color: '#374151', fontSize: 11 }}>{cv.profil}</p>
+          </>
+        )}
+
+        {hasExp && (
+          <>
+            <BlueSection title="Berufserfahrung" />
+            {cv.erfahrungen.filter(e => e.position || e.firma).map(exp => (
+              <div key={exp.id} style={{ display: 'flex', gap: 14, marginBottom: 12 }}>
+                <div style={{ width: 86, flexShrink: 0, fontSize: 10, color: '#64748b', lineHeight: 1.5, paddingTop: 1 }}>
+                  {[exp.von, exp.bis].filter(Boolean).join(' – ')}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 12 }}>{exp.position}</div>
+                  {(exp.firma || exp.ort) && (
+                    <div style={{ fontSize: 10.5, color: '#475569', marginBottom: 3 }}>
+                      {[exp.firma, exp.ort].filter(Boolean).join(' – ')}
+                    </div>
+                  )}
+                  {exp.taetigkeiten && (
+                    <p style={{ margin: 0, fontSize: 10.5, color: '#374151', lineHeight: 1.65 }}>
+                      {exp.taetigkeiten.split('\n').filter(Boolean).join(' · ')}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {hasEdu && (
+          <>
+            <BlueSection title="Ausbildung" />
+            {cv.ausbildungen.filter(e => e.abschluss || e.institution).map(edu => (
+              <div key={edu.id} style={{ display: 'flex', gap: 14, marginBottom: 10 }}>
+                <div style={{ width: 86, flexShrink: 0, fontSize: 10, color: '#64748b', paddingTop: 1 }}>
+                  {[edu.von, edu.bis].filter(Boolean).join(' – ')}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 12 }}>{edu.abschluss}</div>
+                  {(edu.institution || edu.ort) && (
+                    <div style={{ fontSize: 10.5, color: '#475569', marginBottom: 2 }}>
+                      {[edu.institution, edu.ort].filter(Boolean).join(', ')}
+                    </div>
+                  )}
+                  {edu.hinweis && <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>{edu.hinweis}</p>}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {cv.skills.length > 0 && (
+          <>
+            <BlueSection title="Fähigkeiten" />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {cv.skills.map(s => (
+                <span key={s} style={{ border: '1.5px solid #1e40af', borderRadius: 4, padding: '3px 10px', fontSize: 10.5, color: '#1e40af', fontWeight: 500 }}>{s}</span>
+              ))}
+            </div>
+          </>
+        )}
+
+        {cv.sprachen.some(l => l.sprache) && (
+          <>
+            <BlueSection title="Sprachen" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {cv.sprachen.filter(l => l.sprache).map(l => (
+                <div key={l.id} style={{ display: 'flex', gap: 14 }}>
+                  <span style={{ fontWeight: 700, fontSize: 11.5, minWidth: 80 }}>{l.sprache}</span>
+                  <span style={{ fontSize: 11, color: '#475569' }}>{l.niveau}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {cv.fuehrerschein && (
+          <>
+            <BlueSection title="Führerscheine" />
+            <div style={{ fontSize: 11, color: '#374151' }}>{cv.fuehrerschein}</div>
+          </>
+        )}
+
+        {cv.bescheinigungen.length > 0 && (
+          <>
+            <BlueSection title="Bescheinigungen" />
+            {cv.bescheinigungen.map((b, i) => (
+              <div key={i} style={{ fontSize: 11, color: '#374151', marginBottom: 3 }}>{b}</div>
+            ))}
+          </>
+        )}
+
+        {(!cv.profil && !hasExp && !hasEdu && cv.skills.length === 0) && (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: '#cbd5e1', fontSize: 13 }}>
+            Füllen Sie das Formular aus — Ihr Lebenslauf erscheint hier.
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── CV Preview wrapper ─────────────────────────────────────────────────────────
 
 function CVPreview({ cv, template }: { cv: CVData; template: Template }) {
@@ -802,7 +978,7 @@ function CVPreview({ cv, template }: { cv: CVData; template: Template }) {
       boxShadow: '0 4px 32px rgba(0,0,0,0.12)',
       borderRadius: 8, overflow: 'hidden',
     }}>
-      {template === 'A' ? <TemplateA cv={cv} /> : <TemplateB cv={cv} />}
+      {template === 'A' ? <TemplateA cv={cv} /> : template === 'B' ? <TemplateB cv={cv} /> : <TemplateC cv={cv} />}
     </div>
   )
 }
@@ -813,8 +989,9 @@ function TemplateSelector({ active, onChange }: { active: Template; onChange: (t
   return (
     <div className="no-print" style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
       {([
-        { id: 'A' as Template, label: 'Klassisch (2 Spalten)' },
-        { id: 'B' as Template, label: 'Modern (1 Spalte)' },
+        { id: 'A' as Template, label: 'Klassisch' },
+        { id: 'B' as Template, label: 'Modern'    },
+        { id: 'C' as Template, label: 'Blauer Header' },
       ] as const).map(t => (
         <button key={t.id} className={`tmpl-btn${active === t.id ? ' active' : ''}`} onClick={() => onChange(t.id)}>
           {t.label}
