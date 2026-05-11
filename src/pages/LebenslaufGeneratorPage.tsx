@@ -55,9 +55,18 @@ const STEPS = [
 const Styles = () => (
   <style>{`
     @media print {
-      .no-print { display: none !important; }
+      nav, .no-print { display: none !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      body { background: white !important; margin: 0 !important; }
+      html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+      .cv-page-bg { background: white !important; padding: 0 !important; min-height: unset !important; }
+      .cv-grid {
+        display: block !important;
+        background: white !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+      .cv-preview-col { position: static !important; width: 100% !important; }
       .cv-paper {
         box-shadow: none !important; border-radius: 0 !important;
         margin: 0 !important; width: 100% !important;
@@ -531,6 +540,39 @@ export default function LebenslaufGeneratorPage() {
   const [cv, setCv] = useState<CVData>(INITIAL)
   const [step, setStep]   = useState(1)
 
+  const handlePrint = () => {
+    const cvEl = document.querySelector<HTMLElement>('.cv-paper')
+    if (!cvEl) { window.print(); return }
+
+    const win = window.open('', '_blank')
+    if (!win) { window.print(); return }  // fallback if popup blocked
+
+    win.document.write(`<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Lebenslauf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: white;
+           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    @page { margin: 0; size: A4 portrait; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  </style>
+</head>
+<body>
+  ${cvEl.outerHTML}
+  <script>
+    window.onload = function() { setTimeout(function() { window.print(); }, 400); };
+    window.onafterprint = function() { window.close(); };
+  <\/script>
+</body>
+</html>`)
+    win.document.close()
+  }
+
   const renderForm = () => {
     switch (step) {
       case 1: return <Step1 cv={cv} set={setCv} />
@@ -544,7 +586,7 @@ export default function LebenslaufGeneratorPage() {
   return (
     <>
       <Styles />
-      <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: F }}>
+      <div className="cv-page-bg" style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: F }}>
         <PublicNav />
 
         {/* Hero strip */}
@@ -574,7 +616,7 @@ export default function LebenslaufGeneratorPage() {
         </div>
 
         {/* Two-column layout */}
-        <div style={{
+        <div className="cv-grid" style={{
           maxWidth: 1200, margin: '0 auto', padding: '32px 28px 80px',
           display: 'grid',
           gridTemplateColumns: 'minmax(320px, 1fr) minmax(320px, 1fr)',
@@ -632,7 +674,7 @@ export default function LebenslaufGeneratorPage() {
                     Klicken Sie auf "PDF herunterladen". Im Browser-Druckdialog wählen Sie <strong>"Als PDF speichern"</strong>.
                   </p>
                   <button
-                    onClick={() => window.print()}
+                    onClick={handlePrint}
                     style={{
                       width: '100%', border: 'none', cursor: 'pointer',
                       background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
@@ -684,7 +726,7 @@ export default function LebenslaufGeneratorPage() {
           </div>
 
           {/* ── Right: Live Preview ── */}
-          <div style={{ position: 'sticky', top: 88 }}>
+          <div className="cv-preview-col" style={{ position: 'sticky', top: 88 }}>
             <div
               className="no-print"
               style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8', fontFamily: F, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}
