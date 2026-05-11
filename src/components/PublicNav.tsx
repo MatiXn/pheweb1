@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuthContext } from '../features/auth'
 
 const F = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
 
@@ -18,6 +19,7 @@ function useScrolled(threshold = 20) {
 
 export default function PublicNav() {
   const scrolled = useScrolled()
+  const { user } = useAuthContext()
 
   return (
     <nav style={{
@@ -67,31 +69,50 @@ export default function PublicNav() {
 
         {/* CTA buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Link
-            to="/login"
-            className="nav-link-hover"
-            style={{
-              fontFamily: F, fontSize: 14, fontWeight: 600,
-              color: 'rgba(148,163,184,0.8)',
-              textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
-            }}
-          >
-            Anmelden
-          </Link>
-          <Link
-            to="/registrieren/unternehmen"
-            className="btn-primary-hover"
-            style={{
-              fontFamily: F, fontSize: 14, fontWeight: 700,
-              color: '#fff', textDecoration: 'none',
-              padding: '9px 22px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
-              boxShadow: '0 2px 12px rgba(37,99,235,0.4)',
-              display: 'inline-flex', alignItems: 'center',
-            }}
-          >
-            Kostenlos starten
-          </Link>
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="btn-primary-hover"
+              style={{
+                fontFamily: F, fontSize: 14, fontWeight: 700,
+                color: '#fff', textDecoration: 'none',
+                padding: '9px 22px', borderRadius: 10,
+                background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                boxShadow: '0 2px 12px rgba(37,99,235,0.4)',
+                display: 'inline-flex', alignItems: 'center',
+              }}
+            >
+              Zum Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="nav-link-hover"
+                style={{
+                  fontFamily: F, fontSize: 14, fontWeight: 600,
+                  color: 'rgba(148,163,184,0.8)',
+                  textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
+                }}
+              >
+                Anmelden
+              </Link>
+              <Link
+                to="/registrieren/unternehmen"
+                className="btn-primary-hover"
+                style={{
+                  fontFamily: F, fontSize: 14, fontWeight: 700,
+                  color: '#fff', textDecoration: 'none',
+                  padding: '9px 22px', borderRadius: 10,
+                  background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                  boxShadow: '0 2px 12px rgba(37,99,235,0.4)',
+                  display: 'inline-flex', alignItems: 'center',
+                }}
+              >
+                Kostenlos starten
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
