@@ -37,6 +37,7 @@ import RecruiterKandidatHochladenPage from "./pages/RecruiterKandidatHochladenPa
 import RecruiterKandidatenPage from "./pages/RecruiterKandidatenPage";
 import KandidatDatenschutzPage from "./pages/KandidatDatenschutzPage";
 import KandidatAnfragePage from "./pages/KandidatAnfragePage";
+import LebenslaufGeneratorPage from "./pages/LebenslaufGeneratorPage";
 import { AuthProvider } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PageTransition } from "./components/PageTransition";
@@ -78,7 +79,8 @@ createRoot(document.getElementById("root")).render(
           <Route path="/admin/monitoring" element={<ProtectedRoute><AdminMonitoringPage /></ProtectedRoute>} />
 
           {/* Kandidat — öffentliche Anfrage (kein Login) */}
-          <Route path="/kandidat/anfrage" element={<KandidatAnfragePage />} />
+          <Route path="/kandidat/anfrage"       element={<KandidatAnfragePage />}        />
+          <Route path="/lebenslauf-erstellen"   element={<LebenslaufGeneratorPage />}    />
 
           {/* Kandidat — interne Seiten (Recruiter-verwaltete Profile) */}
           <Route path="/kandidat/onboarding" element={<ProtectedRoute><KandidatOnboardingPage /></ProtectedRoute>} />

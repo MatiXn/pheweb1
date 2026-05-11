@@ -138,6 +138,63 @@ export default function FuerKandidatenPage() {
           </div>
         </section>
 
+        {/* CV Generator Teaser */}
+        <section style={{ background: '#f8fafc', padding: '80px 28px', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #3b0764 0%, #6d28d9 55%, #7c3aed 100%)',
+              borderRadius: 24, padding: '52px 52px', overflow: 'hidden', position: 'relative',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 32,
+            }}>
+              {/* BG orb */}
+              <div style={{ position: 'absolute', top: '-40%', right: '-5%', width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, maxWidth: 520 }}>
+                <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 99, padding: '5px 14px', marginBottom: 18 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(233,213,255,0.9)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, fontFamily: F }}>
+                    Neues Feature · Kostenlos
+                  </span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', fontFamily: F, margin: '0 0 12px' }}>
+                  Lebenslauf in 5 Minuten erstellen
+                </h2>
+                <p style={{ fontSize: 15, color: 'rgba(196,181,253,0.85)', fontFamily: F, margin: '0 0 28px', lineHeight: 1.7 }}>
+                  Unser kostenloser Lebenslauf-Generator führt Sie Schritt für Schritt durch alle Abschnitte — mit Live-Vorschau und direktem PDF-Download. Kein Konto nötig.
+                </p>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
+                  <Link
+                    to="/lebenslauf-erstellen"
+                    style={{
+                      fontFamily: F, fontSize: 14, fontWeight: 700, color: '#6d28d9',
+                      textDecoration: 'none', background: '#fff',
+                      padding: '12px 24px', borderRadius: 12,
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                      display: 'inline-block',
+                    }}
+                  >
+                    Lebenslauf erstellen →
+                  </Link>
+                </div>
+              </div>
+              {/* Mini CV mock */}
+              <div style={{
+                position: 'relative', zIndex: 1, flexShrink: 0,
+                background: '#fff', borderRadius: 12, padding: '20px 22px', width: 200,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+              }}>
+                <div style={{ height: 10, background: '#6d28d9', borderRadius: 4, marginBottom: 8, width: '80%' }} />
+                <div style={{ height: 7, background: '#a78bfa', borderRadius: 3, marginBottom: 16, width: '55%' }} />
+                {['Berufserfahrung', 'Ausbildung', 'Fähigkeiten'].map(s => (
+                  <div key={s} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 8, fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 5, paddingBottom: 3, borderBottom: '1.5px solid #ede9fe', fontFamily: F }}>{s}</div>
+                    <div style={{ height: 5, background: '#f1f5f9', borderRadius: 3, marginBottom: 4, width: '90%' }} />
+                    <div style={{ height: 5, background: '#f1f5f9', borderRadius: 3, width: '70%' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section style={{ background: '#ffffff', padding: '100px 28px' }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
